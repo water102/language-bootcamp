@@ -1,0 +1,1012 @@
+{
+  "SOURCES": [
+    {
+      "id": "cefrj",
+      "name": "CEFR-J English Profiles",
+      "provider": "Tono Laboratory / Open Language Profiles",
+      "deliveryModes": [
+        "native"
+      ],
+      "trust": "curated",
+      "licenseClass": "citation-required",
+      "home": "https://github.com/openlanguageprofiles/olp-en-cefrj",
+      "recommendedUse": [
+        "cefr_tagging",
+        "vocabulary",
+        "grammar"
+      ],
+      "badge": "CC BY-SA 4.0"
+    },
+    {
+      "id": "open-english-wordnet",
+      "name": "Open English WordNet",
+      "provider": "Open English WordNet community",
+      "deliveryModes": [
+        "native"
+      ],
+      "trust": "curated",
+      "licenseClass": "CC-BY-4.0",
+      "home": "https://en-word.net/downloads",
+      "recommendedUse": [
+        "definitions",
+        "synsets",
+        "relations",
+        "vocabulary_exercises"
+      ],
+      "badge": "CC BY 4.0"
+    },
+    {
+      "id": "tatoeba",
+      "name": "Tatoeba Bilingual Sentences",
+      "provider": "Tatoeba community",
+      "deliveryModes": [
+        "native",
+        "external"
+      ],
+      "trust": "community",
+      "licenseClass": "CC-BY / CC0",
+      "home": "https://tatoeba.org/en/downloads",
+      "recommendedUse": [
+        "sentences",
+        "translations",
+        "audio",
+        "dictation",
+        "shadowing"
+      ],
+      "badge": "CC BY 2.0 FR / CC0"
+    },
+    {
+      "id": "voa-learning-english",
+      "name": "VOA Learning English",
+      "provider": "Voice of America",
+      "deliveryModes": [
+        "native",
+        "embed",
+        "external"
+      ],
+      "trust": "official",
+      "licenseClass": "public-domain",
+      "home": "https://learningenglish.voanews.com/",
+      "recommendedUse": [
+        "multimedia_lessons",
+        "listening",
+        "reading"
+      ],
+      "badge": "Public Domain"
+    },
+    {
+      "id": "project-gutenberg",
+      "name": "Project Gutenberg Classic Readers",
+      "provider": "Project Gutenberg",
+      "deliveryModes": [
+        "native",
+        "external"
+      ],
+      "trust": "official",
+      "licenseClass": "public-domain",
+      "home": "https://www.gutenberg.org/",
+      "recommendedUse": [
+        "extensive_reading",
+        "literature"
+      ],
+      "badge": "Public Domain"
+    },
+    {
+      "id": "librivox",
+      "name": "LibriVox Free Audiobooks",
+      "provider": "LibriVox Volunteers",
+      "deliveryModes": [
+        "native",
+        "external"
+      ],
+      "trust": "official",
+      "licenseClass": "public-domain",
+      "home": "https://librivox.org/",
+      "recommendedUse": [
+        "extensive_listening",
+        "audiobooks"
+      ],
+      "badge": "Public Domain"
+    },
+    {
+      "id": "cambridge-english",
+      "name": "Cambridge English Activities",
+      "provider": "Cambridge English",
+      "deliveryModes": [
+        "external"
+      ],
+      "trust": "official",
+      "licenseClass": "free-access-deep-link",
+      "home": "https://www.cambridgeenglish.org/supporting-learners/",
+      "recommendedUse": [
+        "external_practice",
+        "placement"
+      ],
+      "badge": "Official Link"
+    },
+    {
+      "id": "british-council-learnenglish",
+      "name": "British Council LearnEnglish",
+      "provider": "British Council",
+      "deliveryModes": [
+        "external"
+      ],
+      "trust": "official",
+      "licenseClass": "free-access-deep-link",
+      "home": "https://learnenglish.britishcouncil.org/",
+      "recommendedUse": [
+        "skills_practice",
+        "grammar"
+      ],
+      "badge": "Official Link"
+    },
+    {
+      "id": "ted-talks",
+      "name": "TED Talks Interactive Transcripts",
+      "provider": "TED Conferences",
+      "deliveryModes": [
+        "external",
+        "embed"
+      ],
+      "trust": "official",
+      "licenseClass": "free-embed-link",
+      "home": "https://www.ted.com/talks",
+      "recommendedUse": [
+        "listening",
+        "presentation",
+        "critical_thinking"
+      ],
+      "badge": "Verified Media"
+    }
+  ],
+  "EXTERNAL_RESOURCES": [
+    {
+      "id": "cambridge-free-activities",
+      "sourceId": "cambridge-english",
+      "title": "Cambridge English Free Learning Activities",
+      "deliveryMode": "external",
+      "url": "https://www.cambridgeenglish.org/learning-english/activities-for-learners/",
+      "skills": [
+        "grammar",
+        "vocabulary",
+        "reading",
+        "listening"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "durationMinutes": 15,
+      "description": "Hơn 175 bài tập tương tác miễn phí chia theo cấp độ CEFR từ Cambridge Assessment English.",
+      "rights": "Free to access online; direct deep-link."
+    },
+    {
+      "id": "british-council-learnenglish",
+      "sourceId": "british-council-learnenglish",
+      "title": "British Council Skills & Grammar Hub",
+      "deliveryMode": "external",
+      "url": "https://learnenglish.britishcouncil.org/",
+      "skills": [
+        "listening",
+        "reading",
+        "writing",
+        "speaking",
+        "grammar"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "durationMinutes": 20,
+      "description": "Nền tảng học tiếng Anh chuẩn Vương quốc Anh với bài nghe, bài đọc có audio và bài tập tương tác.",
+      "rights": "Official educational hub; direct link."
+    },
+    {
+      "id": "voa-learning-english-home",
+      "sourceId": "voa-learning-english",
+      "title": "VOA Learning English — Multilevel Portal",
+      "deliveryMode": "external",
+      "url": "https://learningenglish.voanews.com/",
+      "skills": [
+        "listening",
+        "reading",
+        "vocabulary"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "durationMinutes": 25,
+      "description": "Tin tức thế giới và khoa học được đọc với tốc độ chậm hơn một phần ba so với bình thường và từ vựng chọn lọc.",
+      "rights": "Public Domain US Govt works (VOA produced)."
+    },
+    {
+      "id": "voa-lets-learn-english-1",
+      "sourceId": "voa-learning-english",
+      "title": "Let's Learn English — Level 1 & 2 Video Course",
+      "deliveryMode": "embed",
+      "url": "https://learningenglish.voanews.com/p/5644.html",
+      "skills": [
+        "listening",
+        "speaking",
+        "vocabulary"
+      ],
+      "levels": [
+        "A1",
+        "A2"
+      ],
+      "durationMinutes": 30,
+      "description": "Khóa học 52 tuần dành cho người mới bắt đầu với người hướng dẫn chuẩn Mỹ, bảng từ và bài tập tải về.",
+      "rights": "Public Domain (VOA produced)."
+    },
+    {
+      "id": "librivox-catalog",
+      "sourceId": "librivox",
+      "title": "LibriVox Free Public Domain Audiobooks",
+      "deliveryMode": "external",
+      "url": "https://librivox.org/search",
+      "skills": [
+        "listening"
+      ],
+      "levels": [
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ],
+      "durationMinutes": 45,
+      "description": "Kho sách nói miễn phí lớn nhất thế giới do các tình nguyện viên đọc các tác phẩm văn học kinh điển.",
+      "rights": "Public Domain worldwide."
+    },
+    {
+      "id": "project-gutenberg-catalog",
+      "sourceId": "project-gutenberg",
+      "title": "Project Gutenberg Library of Graded eBooks",
+      "deliveryMode": "external",
+      "url": "https://www.gutenberg.org/ebooks/",
+      "skills": [
+        "reading"
+      ],
+      "levels": [
+        "B1",
+        "B2",
+        "C1",
+        "C2"
+      ],
+      "durationMinutes": 30,
+      "description": "Hơn 70,000 cuốn sách điện tử kinh điển miễn phí định dạng HTML, EPUB và Kindle.",
+      "rights": "Public Domain in the United States."
+    },
+    {
+      "id": "elllo",
+      "sourceId": "external-elllo",
+      "title": "ELLLO English Listening Lesson Library Online",
+      "deliveryMode": "external",
+      "url": "https://www.elllo.org/",
+      "skills": [
+        "listening",
+        "vocabulary"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2",
+        "C1"
+      ],
+      "durationMinutes": 15,
+      "description": "Hơn 3,000 bài luyện nghe phỏng vấn tự nhiên với hơn 300 giọng người bản xứ từ khắp nơi trên thế giới.",
+      "rights": "Free educational access with attribution."
+    },
+    {
+      "id": "randall-esl-lab",
+      "sourceId": "external-randall-esl",
+      "title": "Randall's ESL Cyber Listening Lab",
+      "deliveryMode": "external",
+      "url": "https://www.esl-lab.com/",
+      "skills": [
+        "listening",
+        "speaking"
+      ],
+      "levels": [
+        "A1",
+        "A2",
+        "B1",
+        "B2"
+      ],
+      "durationMinutes": 20,
+      "description": "Bài luyện nghe theo ngữ cảnh đời sống hàng ngày với câu hỏi trắc nghiệm trước và sau khi nghe.",
+      "rights": "Deep-link for personal educational use."
+    },
+    {
+      "id": "ted-talks-transcripts",
+      "sourceId": "ted-talks",
+      "title": "TED Talks with Interactive Transcripts",
+      "deliveryMode": "external",
+      "url": "https://www.ted.com/talks?language=en",
+      "skills": [
+        "listening",
+        "reading",
+        "speaking"
+      ],
+      "levels": [
+        "B2",
+        "C1",
+        "C2"
+      ],
+      "durationMinutes": 18,
+      "description": "Các bài thuyết trình học thuật đỉnh cao với phụ đề và bản ghi lời thoại tương tác có thể click từng câu.",
+      "rights": "Official TED embed / open viewing."
+    }
+  ],
+  "TATOEBA_SENTENCES": [
+    {
+      "id": "tat-a1-01",
+      "level": "A1",
+      "en": "I drink coffee every morning before work.",
+      "vi": "Tôi uống cà phê mỗi sáng trước khi đi làm.",
+      "tokens": [
+        "I",
+        "drink",
+        "coffee",
+        "every",
+        "morning",
+        "before",
+        "work."
+      ],
+      "blankToken": "drink",
+      "grammar": "Present Simple (Routine)",
+      "topic": "daily_routine"
+    },
+    {
+      "id": "tat-a1-02",
+      "level": "A1",
+      "en": "There are four chairs around the dining table.",
+      "vi": "Có bốn chiếc ghế xung quanh bàn ăn.",
+      "tokens": [
+        "There",
+        "are",
+        "four",
+        "chairs",
+        "around",
+        "the",
+        "dining",
+        "table."
+      ],
+      "blankToken": "are",
+      "grammar": "There is / There are",
+      "topic": "home_furniture"
+    },
+    {
+      "id": "tat-a1-03",
+      "level": "A1",
+      "en": "She does not like cold weather in winter.",
+      "vi": "Cô ấy không thích thời tiết lạnh vào mùa đông.",
+      "tokens": [
+        "She",
+        "does",
+        "not",
+        "like",
+        "cold",
+        "weather",
+        "in",
+        "winter."
+      ],
+      "blankToken": "does",
+      "grammar": "Present Simple (Negative)",
+      "topic": "weather_feelings"
+    },
+    {
+      "id": "tat-a2-01",
+      "level": "A2",
+      "en": "We decided to take the train because of heavy rain.",
+      "vi": "Chúng tôi đã quyết định đi tàu hỏa vì trời mưa to.",
+      "tokens": [
+        "We",
+        "decided",
+        "to",
+        "take",
+        "the",
+        "train",
+        "because",
+        "of",
+        "heavy",
+        "rain."
+      ],
+      "blankToken": "decided",
+      "grammar": "Past Simple & Infinitive",
+      "topic": "travel_transport"
+    },
+    {
+      "id": "tat-a2-02",
+      "level": "A2",
+      "en": "Have you ever visited a modern art museum?",
+      "vi": "Bạn đã từng ghé thăm một bảo tàng nghệ thuật hiện đại chưa?",
+      "tokens": [
+        "Have",
+        "you",
+        "ever",
+        "visited",
+        "a",
+        "modern",
+        "art",
+        "museum?"
+      ],
+      "blankToken": "visited",
+      "grammar": "Present Perfect (Experience)",
+      "topic": "culture_travel"
+    },
+    {
+      "id": "tat-a2-03",
+      "level": "A2",
+      "en": "If it rains tomorrow, we will stay at home.",
+      "vi": "Nếu ngày mai trời mưa, chúng tôi sẽ ở nhà.",
+      "tokens": [
+        "If",
+        "it",
+        "rains",
+        "tomorrow,",
+        "we",
+        "will",
+        "stay",
+        "at",
+        "home."
+      ],
+      "blankToken": "rains",
+      "grammar": "First Conditional",
+      "topic": "plans_future"
+    },
+    {
+      "id": "tat-b1-01",
+      "level": "B1",
+      "en": "Although she was exhausted, she managed to finish the project on time.",
+      "vi": "Mặc dù đã kiệt sức, cô ấy vẫn xoay xở hoàn thành dự án đúng hạn.",
+      "tokens": [
+        "Although",
+        "she",
+        "was",
+        "exhausted,",
+        "she",
+        "managed",
+        "to",
+        "finish",
+        "the",
+        "project",
+        "on",
+        "time."
+      ],
+      "blankToken": "managed",
+      "grammar": "Concession clauses (Although / Managed to)",
+      "topic": "work_productivity"
+    },
+    {
+      "id": "tat-b1-02",
+      "level": "B1",
+      "en": "The conference was postponed due to unforeseen logistical issues.",
+      "vi": "Hội nghị đã bị hoãn do các vấn đề hậu cần không lường trước được.",
+      "tokens": [
+        "The",
+        "conference",
+        "was",
+        "postponed",
+        "due",
+        "to",
+        "unforeseen",
+        "logistical",
+        "issues."
+      ],
+      "blankToken": "postponed",
+      "grammar": "Passive Voice in Past Simple",
+      "topic": "business_events"
+    },
+    {
+      "id": "tat-b1-03",
+      "level": "B1",
+      "en": "I would rather study abroad than stay in my comfort zone.",
+      "vi": "Tôi thà đi du học còn hơn là cứ mãi ở trong vùng an toàn của mình.",
+      "tokens": [
+        "I",
+        "would",
+        "rather",
+        "study",
+        "abroad",
+        "than",
+        "stay",
+        "in",
+        "my",
+        "comfort",
+        "zone."
+      ],
+      "blankToken": "rather",
+      "grammar": "Preference structures (Would rather)",
+      "topic": "education_mindset"
+    },
+    {
+      "id": "tat-b2-01",
+      "level": "B2",
+      "en": "Had I known about the flight delay, I would have stayed at the hotel longer.",
+      "vi": "Nếu tôi biết về sự chậm trễ của chuyến bay, tôi đã ở lại khách sạn lâu hơn.",
+      "tokens": [
+        "Had",
+        "I",
+        "known",
+        "about",
+        "the",
+        "flight",
+        "delay,",
+        "I",
+        "would",
+        "have",
+        "stayed",
+        "at",
+        "the",
+        "hotel",
+        "longer."
+      ],
+      "blankToken": "known",
+      "grammar": "Inversion in Third Conditional",
+      "topic": "travel_hypothetical"
+    },
+    {
+      "id": "tat-b2-02",
+      "level": "B2",
+      "en": "The proliferation of artificial intelligence has sparked contentious debates worldwide.",
+      "vi": "Sự phát triển mạnh mẽ của trí tuệ nhân tạo đã làm dấy lên những cuộc tranh luận gay gắt trên toàn thế giới.",
+      "tokens": [
+        "The",
+        "proliferation",
+        "of",
+        "artificial",
+        "intelligence",
+        "has",
+        "sparked",
+        "contentious",
+        "debates",
+        "worldwide."
+      ],
+      "blankToken": "proliferation",
+      "grammar": "Advanced abstract nominalization",
+      "topic": "technology_society"
+    },
+    {
+      "id": "tat-c1-01",
+      "level": "C1",
+      "en": "Under no circumstances should sensitive customer information be disclosed to unauthorized third parties.",
+      "vi": "Trong bất kỳ trường hợp nào, thông tin nhạy cảm của khách hàng cũng không được tiết lộ cho bên thứ ba trái phép.",
+      "tokens": [
+        "Under",
+        "no",
+        "circumstances",
+        "should",
+        "sensitive",
+        "customer",
+        "information",
+        "be",
+        "disclosed",
+        "to",
+        "unauthorized",
+        "third",
+        "parties."
+      ],
+      "blankToken": "should",
+      "grammar": "Negative adverbial inversion",
+      "topic": "security_ethics"
+    },
+    {
+      "id": "tat-c1-02",
+      "level": "C1",
+      "en": "Notwithstanding the formidable obstacles, the research team persevered and made a groundbreaking discovery.",
+      "vi": "Bất chấp những trở ngại ghê gớm, nhóm nghiên cứu đã kiên trì và tạo nên một phát hiện mang tính đột phá.",
+      "tokens": [
+        "Notwithstanding",
+        "the",
+        "formidable",
+        "obstacles,",
+        "the",
+        "research",
+        "team",
+        "persevered",
+        "and",
+        "made",
+        "a",
+        "groundbreaking",
+        "discovery."
+      ],
+      "blankToken": "Notwithstanding",
+      "grammar": "Advanced formal preposition & collocations",
+      "topic": "scientific_research"
+    }
+  ],
+  "VOA_STORIES": [
+    {
+      "id": "voa-story-01",
+      "level": "A2",
+      "title": "A Community Garden Brings Neighbors Together",
+      "topic": "community",
+      "audioDuration": "2 min",
+      "excerpt": "In a quiet corner of Washington, D.C., neighbors gather each weekend to grow fresh vegetables and share gardening tips...",
+      "fullText": "In a quiet corner of Washington, D.C., neighbors gather each weekend to grow fresh vegetables and share gardening tips. Maria Santos started the project two years ago. At first, the land was full of weeds and trash. Now, it produces tomatoes, lettuce, and colorful sunflowers.\n\n\"Working in the garden helps people get outside, talk to each other, and enjoy fresh food,\" Santos explains. Children also visit the garden to learn where their food comes from. Every Saturday morning, volunteers harvest ripe produce and distribute baskets to local families who need support.",
+      "vocabulary": [
+        {
+          "word": "gather",
+          "ipa": "/ˈɡæð.ər/",
+          "meaningVi": "tụ họp, tập hợp lại"
+        },
+        {
+          "word": "weeds",
+          "ipa": "/wiːdz/",
+          "meaningVi": "cỏ dại"
+        },
+        {
+          "word": "harvest",
+          "ipa": "/ˈhɑː.vɪst/",
+          "meaningVi": "thu hoạch vụ mùa"
+        },
+        {
+          "word": "distribute",
+          "ipa": "/dɪˈstrɪb.juːt/",
+          "meaningVi": "phân phối, phát tặng"
+        }
+      ],
+      "questions": [
+        {
+          "question": "Who initiated the community garden project?",
+          "options": [
+            "Maria Santos",
+            "A local school teacher",
+            "The city mayor",
+            "A foreign visitor"
+          ],
+          "correctIndex": 0,
+          "explanation": "The passage states that Maria Santos started the project two years ago."
+        },
+        {
+          "question": "What was the condition of the land before the project began?",
+          "options": [
+            "It was an apple orchard",
+            "It was full of weeds and trash",
+            "It was a parking lot",
+            "It was already a flower garden"
+          ],
+          "correctIndex": 1,
+          "explanation": "The text says 'At first, the land was full of weeds and trash.'"
+        }
+      ],
+      "speakingPrompt": "Describe a community or neighborhood project you would like to start where you live.",
+      "writingPrompt": "Write an 80-100 word email inviting your friends to volunteer at a weekend community cleanup."
+    },
+    {
+      "id": "voa-story-02",
+      "level": "B1",
+      "title": "How Sleep Resets Your Brain for Learning",
+      "topic": "science_health",
+      "audioDuration": "3 min",
+      "excerpt": "Neuroscientists have long suspected that sleep is not passive rest, but an active maintenance cycle for the nervous system...",
+      "fullText": "Neuroscientists have long suspected that sleep is not passive rest, but an active maintenance cycle for the nervous system. Recent brain imaging studies show that during deep sleep phases, cerebrospinal fluid pulses through the brain, washing away toxic metabolic waste products that accumulate during wakefulness.\n\nFurthermore, sleep plays a pivotal role in memory consolidation. When you study new vocabulary or complex grammar patterns during the day, neural representations are initially fragile in the hippocampus. During nocturnal slow-wave sleep, these memories are reactivated and gradually transferred to the neocortex for permanent long-term storage.\n\nDepriving yourself of adequate sleep undermines both cognitive focus and emotional regulation. Language learners who get 7.5 to 8.5 hours of uninterrupted rest consistently outperform sleep-deprived peers on retention benchmarks.",
+      "vocabulary": [
+        {
+          "word": "passive",
+          "ipa": "/ˈpæs.ɪv/",
+          "meaningVi": "thụ động, bị động"
+        },
+        {
+          "word": "accumulate",
+          "ipa": "/əˈkjuː.mjə.leɪt/",
+          "meaningVi": "tích tụ, dồn tụ theo thời gian"
+        },
+        {
+          "word": "consolidation",
+          "ipa": "/kənˌsɒl.ɪˈdeɪ.ʃən/",
+          "meaningVi": "sự củng cố, làm cho vững chắc"
+        },
+        {
+          "word": "undermines",
+          "ipa": "/ˌʌn.dəˈmaɪnz/",
+          "meaningVi": "làm suy yếu, hủy hoại dần"
+        }
+      ],
+      "questions": [
+        {
+          "question": "What cleans toxic waste products from the brain during deep sleep?",
+          "options": [
+            "Direct sunlight",
+            "Cerebrospinal fluid pulses",
+            "Adrenaline surges",
+            "Glucose storage"
+          ],
+          "correctIndex": 1,
+          "explanation": "Studies show cerebrospinal fluid pulses through the brain to flush metabolic waste."
+        },
+        {
+          "question": "Where are temporary memories initially stored before long-term consolidation?",
+          "options": [
+            "The neocortex",
+            "The spinal cord",
+            "The hippocampus",
+            "The optic nerve"
+          ],
+          "correctIndex": 2,
+          "explanation": "Representations are initially fragile in the hippocampus before transferring to the neocortex."
+        }
+      ],
+      "speakingPrompt": "Analyze the trade-offs between pulling an all-nighter before a test versus getting 8 hours of sleep.",
+      "writingPrompt": "Write a 150-word synthesis of how sleep optimizes long-term language acquisition."
+    },
+    {
+      "id": "voa-story-03",
+      "level": "B2",
+      "title": "The Ethical Dilemma of Autonomous AI Decision-Making",
+      "topic": "technology_ethics",
+      "audioDuration": "3.5 min",
+      "excerpt": "As machine learning algorithms assume greater autonomy across healthcare, finance, and criminal justice, accountability questions mount...",
+      "fullText": "As machine learning algorithms assume greater autonomy across healthcare diagnostics, automated lending, and criminal justice sentencing, questions of accountability and ethical alignment have moved from speculative philosophy into immediate jurisprudence.\n\nAlgorithmic systems trained on historical corpora inevitably inherit and occasionally amplify systemic historical biases. For instance, predictive policing tools may disproportionately flag marginalized demographic sectors simply because enforcement data was historically skewed. \n\nMoreover, the \"black box\" nature of deep neural networks poses substantial transparency barriers. If an algorithm denies a patient a life-saving transplant or rejects a mortgage application, affected individuals possess a fundamental right to an explainable rationale. Regulatory frameworks such as the European Union's AI Act are attempting to classify risk tiers and enforce rigorous audit trails.",
+      "vocabulary": [
+        {
+          "word": "jurisprudence",
+          "ipa": "/ˌdʒʊə.rɪsˈpruː.dəns/",
+          "meaningVi": "pháp lý học, hệ thống luật pháp"
+        },
+        {
+          "word": "marginalized",
+          "ipa": "/ˈmɑː.dʒɪ.nəl.aɪzd/",
+          "meaningVi": "bị gạt ra ngoài lề xã hội"
+        },
+        {
+          "word": "skewed",
+          "ipa": "/skjuːd/",
+          "meaningVi": "bị lệch, thiên lệch, bóp méo"
+        },
+        {
+          "word": "audit trails",
+          "ipa": "/ˈɔː.dɪt treɪlz/",
+          "meaningVi": "dấu vết kiểm toán, lịch sử truy vết"
+        }
+      ],
+      "questions": [
+        {
+          "question": "Why do predictive algorithms sometimes perpetuate unfair biases?",
+          "options": [
+            "They intentionally disregard human laws",
+            "They are trained on historically skewed corpora",
+            "They lack processing power",
+            "Engineers program malicious rules"
+          ],
+          "correctIndex": 1,
+          "explanation": "Algorithms inherit and amplify biases present in historical training datasets."
+        },
+        {
+          "question": "What fundamental right is threatened by 'black box' algorithmic decisions?",
+          "options": [
+            "The right to free internet access",
+            "The right to an explainable rationale",
+            "The right to patent software",
+            "The right to trade cryptocurrencies"
+          ],
+          "correctIndex": 1,
+          "explanation": "Affected individuals have a fundamental right to an explainable decision rationale."
+        }
+      ],
+      "speakingPrompt": "Should humans always have the final veto power over critical automated AI decisions? Give 2 compelling arguments.",
+      "writingPrompt": "Compose a 200-word argumentative essay debating whether automated judicial sentencing can ever be truly objective."
+    },
+    {
+      "id": "voa-story-04",
+      "level": "C1",
+      "title": "Macroeconomic Paradigm Shifts in the Era of Deglobalization",
+      "topic": "economics_geopolitics",
+      "audioDuration": "4 min",
+      "excerpt": "The hyper-globalized consensus that prevailed in the post-Cold War era is yielding to geoeconomic fragmentation and supply chain re-shoring...",
+      "fullText": "The hyper-globalized consensus that prevailed in the post-Cold War era is rapidly yielding to geoeconomic fragmentation, strategic decoupling, and aggressive supply chain re-shoring. Driven by geopolitical friction, vulnerability to pandemic shocks, and sovereign concerns over critical technological inputs, nation-states are prioritizing resilience over pure cost minimization.\n\nThis paradigm shift fundamentally alters global inflation dynamics. For three decades, the integration of vast emerging labor markets exerted persistent downward pressure on consumer prices. Now, the duplication of semiconductor foundries, green energy supply chains, and industrial capacity inevitably introduces structural supply-side frictions.\n\nCentral banks, traditionally equipped with monetary blunt instruments calibrated for demand management, find themselves grappling with cost-push shocks resistant to interest rate hikes. Policymakers must reconcile industrial subsidies with fiscal discipline while averting beggar-thy-neighbor protectionism.",
+      "vocabulary": [
+        {
+          "word": "paradigm shift",
+          "ipa": "/ˈpær.ə.daɪm ʃɪft/",
+          "meaningVi": "sự thay đổi hệ hình, bước ngoặt tư duy"
+        },
+        {
+          "word": "decoupling",
+          "ipa": "/diːˈkʌp.lɪŋ/",
+          "meaningVi": "sự tách rời, cắt đứt ràng buộc kinh tế"
+        },
+        {
+          "word": "re-shoring",
+          "ipa": "/riːˈʃɔː.rɪŋ/",
+          "meaningVi": "đưa chuỗi sản xuất hồi hương về nước"
+        },
+        {
+          "word": "beggar-thy-neighbor",
+          "ipa": "/ˈbeɡ.ər ðaɪ ˈneɪ.bər/",
+          "meaningVi": "chính sách làm hại láng giềng để trục lợi"
+        }
+      ],
+      "questions": [
+        {
+          "question": "What is currently being prioritized over pure cost minimization in supply chains?",
+          "options": [
+            "Short-term quarterly profits",
+            "Resilience and sovereign security",
+            "Rapid deregulation",
+            "Maximum off-shoring"
+          ],
+          "correctIndex": 1,
+          "explanation": "The text states 'nation-states are prioritizing resilience over pure cost minimization.'"
+        },
+        {
+          "question": "Why do supply-side frictions complicate central banking monetary policy?",
+          "options": [
+            "Interest rates only manage demand, not structural cost-push supply shocks",
+            "Central banks have been abolished",
+            "Currencies have stopped fluctuating",
+            "There is no global trade left"
+          ],
+          "correctIndex": 0,
+          "explanation": "Monetary instruments are calibrated for demand management, making cost-push supply shocks harder to counter."
+        }
+      ],
+      "speakingPrompt": "Examine whether strategic self-sufficiency in semiconductor manufacturing is economically feasible for medium-sized economies.",
+      "writingPrompt": "Write a 250-word policy brief analyzing the trade-offs between supply chain security and consumer goods affordability."
+    }
+  ],
+  "EXTENSIVE_READERS": [
+    {
+      "id": "reader-01",
+      "level": "A2",
+      "title": "Aesop's Fables",
+      "author": "Aesop",
+      "source": "Project Gutenberg #21",
+      "audioSource": "LibriVox Audio Collection",
+      "gutenbergUrl": "https://www.gutenberg.org/ebooks/21",
+      "librivoxUrl": "https://librivox.org/aesops-fables-volume-1-by-aesop/",
+      "wordCount": "~300 words per fable",
+      "description": "Những câu chuyện ngụ ngôn kinh điển ngắn gọn với cấu trúc ngữ pháp cơ bản, từ vựng trực quan và bài học đạo đức sâu sắc.",
+      "excerpt": "A Fox one day spied a beautiful bunch of ripe grapes hanging from a vine trained along the branches of a tree. The grapes seemed ready to burst with juice, and the Fox's mouth watered as he gazed longingly at them. He took a few steps back, made a running leap, and just missed the bunch..."
+    },
+    {
+      "id": "reader-02",
+      "level": "B1",
+      "title": "The Adventures of Sherlock Holmes",
+      "author": "Arthur Conan Doyle",
+      "source": "Project Gutenberg #1661",
+      "audioSource": "LibriVox #434",
+      "gutenbergUrl": "https://www.gutenberg.org/ebooks/1661",
+      "librivoxUrl": "https://librivox.org/the-adventures-of-sherlock-holmes-by-sir-arthur-conan-doyle/",
+      "wordCount": "~8,000 words per case",
+      "description": "Bộ truyện trinh thám nổi tiếng giúp rèn luyện khả năng tư duy logic, theo dõi tình tiết và từ vựng miêu tả phong phú.",
+      "excerpt": "To Sherlock Holmes she is always THE woman. I have seldom heard him mention her under any other name. In his eyes she eclipses and predominates the whole of her sex. It was not that he felt any emotion akin to love for Irene Adler..."
+    },
+    {
+      "id": "reader-03",
+      "level": "B2",
+      "title": "The Time Machine",
+      "author": "H.G. Wells",
+      "source": "Project Gutenberg #35",
+      "audioSource": "LibriVox #137",
+      "gutenbergUrl": "https://www.gutenberg.org/ebooks/35",
+      "librivoxUrl": "https://librivox.org/the-time-machine-by-h-g-wells/",
+      "wordCount": "~32,000 words",
+      "description": "Kiệt tác tiểu thuyết khoa học viễn tưởng với ngôn ngữ học thuật, mô tả các khái niệm vật lý thời gian và xã hội tương lai.",
+      "excerpt": "The Time Traveller (for so it will be convenient to speak of him) was expounding a recondite matter to us. His grey eyes shone and twinkled, and his usually pale face was flushed and animated. The fire burnt brightly, and the soft radiance of the incandescent lamps caught the bubbles in our glasses..."
+    },
+    {
+      "id": "reader-04",
+      "level": "C1",
+      "title": "Pride and Prejudice",
+      "author": "Jane Austen",
+      "source": "Project Gutenberg #1342",
+      "audioSource": "LibriVox #128",
+      "gutenbergUrl": "https://www.gutenberg.org/ebooks/1342",
+      "librivoxUrl": "https://librivox.org/pride-and-prejudice-by-jane-austen/",
+      "wordCount": "~120,000 words",
+      "description": "Văn học cổ điển mẫu mực với cú pháp phức điêu luyện, nghệ thuật mỉa mai tinh tế và vốn từ vựng phong phú bậc nhất.",
+      "excerpt": "It is a truth universally acknowledged, that a single man in possession of a good fortune, must be in want of a wife. However little known the feelings or views of such a man may be on his first entering a neighbourhood, this truth is so well fixed in the minds of the surrounding families..."
+    }
+  ],
+  "CEFR_VOCAB_QUIZ": [
+    {
+      "id": "vq-01",
+      "level": "A1",
+      "term": "look forward to",
+      "meaningVi": "háo hức mong đợi một điều gì đó trong tương lai",
+      "question": "Choose the correct preposition to complete: 'I look forward _____ meeting you soon.'",
+      "options": [
+        "to",
+        "at",
+        "for",
+        "with"
+      ],
+      "correctIndex": 0,
+      "explanation": "'look forward to + V-ing/Noun' là cụm giới từ cố định mang nghĩa mong đợi hào hứng.",
+      "synonym": "anticipate eagerly"
+    },
+    {
+      "id": "vq-02",
+      "level": "A2",
+      "term": "make a decision",
+      "meaningVi": "đưa ra quyết định dứt khoát",
+      "question": "Which verb collocates naturally with 'decision'?",
+      "options": [
+        "do",
+        "make",
+        "create",
+        "construct"
+      ],
+      "correctIndex": 1,
+      "explanation": "Trong tiếng Anh chuẩn, ta dùng collocation 'make a decision', không dùng 'do a decision'.",
+      "synonym": "choose / decide"
+    },
+    {
+      "id": "vq-03",
+      "level": "B1",
+      "term": "pay attention to",
+      "meaningVi": "tập trung chú ý vào điều gì",
+      "question": "Complete the sentence: 'Students must pay close _____ to the instructions.'",
+      "options": [
+        "notice",
+        "attention",
+        "regard",
+        "focus"
+      ],
+      "correctIndex": 1,
+      "explanation": "'pay attention to' là cụm động từ tự nhiên mang nghĩa lắng nghe hoặc quan sát chăm chú.",
+      "synonym": "concentrate on"
+    },
+    {
+      "id": "vq-04",
+      "level": "B2",
+      "term": "shed light on",
+      "meaningVi": "làm sáng tỏ, giải thích rõ một vấn đề bí ẩn hoặc phức tạp",
+      "question": "The new forensic evidence helped _____ light on the cold case.",
+      "options": [
+        "throw",
+        "shed",
+        "cast",
+        "both shed and cast are correct"
+      ],
+      "correctIndex": 3,
+      "explanation": "Cả 'shed light on' và 'cast light on' đều là thành ngữ trình độ B2/C1 diễn tả việc soi sáng thông tin.",
+      "synonym": "clarify / illuminate"
+    },
+    {
+      "id": "vq-05",
+      "level": "C1",
+      "term": "pave the way for",
+      "meaningVi": "mở đường, tạo tiền đề thuận lợi cho bước phát triển kế tiếp",
+      "question": "The breakthrough in quantum computing will pave the _____ for instantaneous cryptographic simulations.",
+      "options": [
+        "road",
+        "way",
+        "pathway",
+        "track"
+      ],
+      "correctIndex": 1,
+      "explanation": "Thành ngữ chuẩn C1 là 'pave the way for sth' (mở đường cho cái gì).",
+      "synonym": "facilitate / inaugurate"
+    },
+    {
+      "id": "vq-06",
+      "level": "C1",
+      "term": "strike a delicate balance",
+      "meaningVi": "đạt được sự cân bằng tinh tế giữa hai yêu cầu mâu thuẫn",
+      "question": "The government must _____ a delicate balance between environmental conservation and economic expansion.",
+      "options": [
+        "hit",
+        "catch",
+        "strike",
+        "reach"
+      ],
+      "correctIndex": 2,
+      "explanation": "Collocation C1 cao cấp: 'strike a balance' (đạt được thế cân bằng).",
+      "synonym": "equilibrate / reconcile"
+    }
+  ],
+  "LICENSE_MATRIX": []
+}
