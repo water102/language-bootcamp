@@ -1,6 +1,6 @@
-import { useState, useRef } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { Sessionizer } from '@/core/planner/sessionizer.js';
-import { appState, showToast } from '@/runtime/controller.js';
+import { appState, getActiveSchedule, showToast } from '@/runtime/controller.js';
 import BOOTCAMP_DATA from '@/data.js';
 
 export default function ScheduleEditorModal({ isOpen, onClose, onScheduleUpdated }) {
@@ -13,6 +13,15 @@ export default function ScheduleEditorModal({ isOpen, onClose, onScheduleUpdated
 
   const [activePreset, setActivePreset] = useState('custom');
   const fileInputRef = useRef(null);
+
+  // The editor stays mounted while the app is open. Reload its draft when it
+  // opens so a schedule restored from localStorage is never overwritten by the
+  // initial default schedule.
+  useEffect(() => {
+    if (!isOpen) return;
+    setSchedule(JSON.parse(JSON.stringify(getActiveSchedule())));
+    setActivePreset(appState.customSchedule?.length ? 'custom' : '12h');
+  }, [isOpen]);
 
   if (!isOpen) return null;
 

@@ -43,7 +43,7 @@ export default function ChibiCompanionWidget() {
     return (
       <div
         onClick={() => setMinimized(false)}
-        className="fixed bottom-5 right-5 z-[999] bg-[#1e1b4b] border border-indigo-500/50 rounded-full p-2.5 shadow-2xl cursor-pointer hover:scale-110 transition flex items-center gap-2 text-white"
+        className="fixed bottom-5 left-5 lg:left-[calc(var(--sidebar-w)+20px)] z-[999] bg-[#1e1b4b] border border-indigo-500/50 rounded-full p-2.5 shadow-2xl cursor-pointer hover:scale-110 transition flex items-center gap-2 text-white"
         title="Mở Bạn Đồng Hành Chibi"
       >
         <span className="text-xl">✨</span>
@@ -53,7 +53,7 @@ export default function ChibiCompanionWidget() {
   }
 
   return (
-    <div className="fixed bottom-5 right-5 z-[999] flex flex-col items-end pointer-events-none select-none">
+    <div className="fixed bottom-5 left-5 lg:left-[calc(var(--sidebar-w)+20px)] z-[999] flex flex-col items-start pointer-events-none select-none">
       
       {/* Speech Bubble */}
       {showSpeech && (
@@ -69,7 +69,7 @@ export default function ChibiCompanionWidget() {
           </div>
           <p className="text-gray-200 leading-relaxed">{dialogue}</p>
           {/* Arrow */}
-          <div className="absolute -bottom-2 right-6 w-3 h-3 bg-[#111827] border-r border-b border-indigo-500/40 transform rotate-45" />
+          <div className="absolute -bottom-2 left-6 w-3 h-3 bg-[#111827] border-r border-b border-indigo-500/40 transform rotate-45" />
         </div>
       )}
 
