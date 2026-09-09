@@ -1,0 +1,49 @@
+/* Brand base styles after Tailwind Preflight. */
+/* These were browser defaults in the original design. Define them explicitly
+   so Preflight can normalize the rest without changing existing study content. */
+h1 { font-size: 2em; font-weight: 700; }
+h2 { font-size: 1.5em; font-weight: 700; }
+h3 { font-size: 1.17em; font-weight: 700; }
+h4 { font-size: 1em; font-weight: 700; }
+h5 { font-size: .83em; font-weight: 700; }
+h6 { font-size: .67em; font-weight: 700; }
+ul, menu { list-style-type: disc; }
+ol { list-style-type: decimal; }
+img, svg, video, canvas, iframe, embed, object { display: inline; vertical-align: baseline; }
+audio { display: inline; vertical-align: baseline; }
+progress { vertical-align: -0.2em; }
+button, input, select, textarea {
+  font-size: 13.3333px;
+  font-weight: 400;
+  line-height: normal;
+  letter-spacing: normal;
+}
+input::placeholder, textarea::placeholder { color: #757575; }
+html, body {
+  width: 100%;
+  min-height: 100vh;
+  background-color: var(--bg-main);
+  color: var(--text-main);
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-x: hidden;
+  -webkit-font-smoothing: antialiased;
+}
+
+a {
+  color: var(--primary-light);
+  text-decoration: none;
+  transition: all 0.2s;
+}
+
+a:hover {
+  color: #fff;
+}
+
+button, input, select, textarea {
+  font-family: inherit;
+  color: inherit;
+  border: none;
+  outline: none;
+}

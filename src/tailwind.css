@@ -1,0 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+@import "tailwindcss" source(none);
+@import "./tokens.css" layer(theme);
+@import "./base.css" layer(base);
+@import "./style.css" layer(components);
+@source "./**/*.{js,jsx}";
+
+/* Inline aliases retain the original palette, including runtime token updates. */
+@theme inline {
+  --font-display: var(--font-heading);
+  --font-study: var(--font-body);
+  --font-code: var(--font-mono);
+  --color-main: var(--text-main);
+  --color-muted: var(--text-muted);
+  --color-dim: var(--text-dim);
+  --color-brand: var(--primary);
+  --color-brand-light: var(--primary-light);
+  --color-accent-cyan: var(--accent-cyan);
+  --color-accent-rose: var(--accent-rose);
+  --color-accent-green: var(--accent-green);
+  --color-accent-amber: var(--accent-amber);
+}

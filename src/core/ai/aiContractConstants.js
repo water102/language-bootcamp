@@ -1,0 +1,16 @@
+/**
+ * AI Bridge Contract Constants & Error Codes
+ * Spec reference: docs/cefr-learning-planner-spec/05_AI_BRIDGE_CONTRACT.md
+ */
+
+export const AI_CONTRACT_VERSION = '1.0.0';
+
+export const AI_ERROR_CODES = /** @type {const} */ ({
+  HASH_MISMATCH: 'HASH_MISMATCH',
+  INVALID_JSON: 'INVALID_JSON',
+  SCHEMA_VERSION_UNSUPPORTED: 'SCHEMA_VERSION_UNSUPPORTED',
+  MISSING_REQUIRED_FIELDS: 'MISSING_REQUIRED_FIELDS',
+  SLOT_NOT_FOUND: 'SLOT_NOT_FOUND',
+  DURATION_OVERFLOW: 'DURATION_OVERFLOW',
+  INVALID_SKILL: 'INVALID_SKILL'
+});
