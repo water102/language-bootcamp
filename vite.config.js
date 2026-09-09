@@ -36,7 +36,7 @@ export default defineConfig(({ mode }) => {
       })
     ],
     resolve: { alias: { '@': fileURLToPath(new URL('./src', import.meta.url)) } },
-    base: './',
+    base: '/language-bootcamp/',
     server: { host: '0.0.0.0', port: 8080, strictPort: true },
     build: {
       sourcemap: false,
