@@ -193,8 +193,8 @@ test.describe('C1 Bootcamp Enhancements Suite', () => {
     await page.goto('/');
 
     const dbInitialized = await page.evaluate(async () => {
-      // Open Dexie DB to ensure schema tables are created
-      const { db } = await import('/src/core/storage/db.js');
+      const basePath = window.__BASE_PATH__ || (window.location.pathname.includes('/language-bootcamp') ? '/language-bootcamp' : '');
+      const { db } = await import(`${basePath}/src/core/storage/db.js`);
       await db.open();
       const tables = db.tables.map(t => t.name);
       return tables.includes('recordings') && tables.includes('writingDrafts');

@@ -2,7 +2,20 @@ import BOOTCAMP_DATA from '@/data';
 export { BOOTCAMP_DATA };
 import { store, replaceStudy } from '@/store';
 import dayjs from 'dayjs';
-import { saveRecording, getRecordingsByDay, saveWritingDraftVersion, getWritingDraftHistory } from '@/core/storage/db.js';
+import { 
+  saveRecording, 
+  getRecordingsByDay, 
+  saveWritingDraftVersion, 
+  getWritingDraftHistory, 
+  getAllCustomLessonsLocal, 
+  deleteCustomLessonLocal,
+  getCustomLessonVersions,
+  getActiveLessonVersionId,
+  setActiveLessonVersionId,
+  deleteCustomLessonVersion
+} from '@/core/storage/db.js';
+import { CurriculumContentEngine } from '@/core/curriculum/curriculumContentEngine.js';
+import { generateDayLessonPrompt } from '@/core/ai/lessonPromptBuilder.js';
 /**
  * English C1 Bootcamp — Core Application Controller
  * Browser study tools mounted by React, with Redux persistence.
@@ -45,9 +58,23 @@ export function initializeStudyTools() {
     if (!button) return;
     const { action, day } = button.dataset;
     if (action === 'complete-day') toggleCompleteDay(Number(day));
+    if (action === 'copy-prompt') {
+      const prompt = generateDayLessonPrompt(Number(day));
+      navigator.clipboard.writeText(prompt).then(() => {
+        showToast(`📋 Đã sao chép AI Master Prompt cho Ngày ${day}!`);
+      }).catch(() => {
+        showToast('Không thể sao chép tự động, vui lòng thử lại.');
+      });
+      return;
+    }
+    if (action === 'import-lesson') {
+      closeModal();
+      window.dispatchEvent(new CustomEvent('open-import-lesson-modal', { detail: { day: Number(day) } }));
+      return;
+    }
     if (action === 'switch-day' || action === 'lesson-day') {
       switchCurrentDay(Number(day));
-      if (action === 'lesson-day' || BOOTCAMP_DATA.starterPack.some(l => l.day === Number(day))) {
+      if (action === 'lesson-day' || (BOOTCAMP_DATA.starterPack && BOOTCAMP_DATA.starterPack.some(l => l.day === Number(day)))) {
         document.querySelector('.nav-link[data-target=lessons]')?.click();
         window.location.hash = '#/lessons';
       } else {
@@ -57,6 +84,70 @@ export function initializeStudyTools() {
     }
     closeModal();
   });
+
+  // Lesson version selection handler via delegation
+  document.addEventListener('change', async (event) => {
+    if (event.target && event.target.id === 'lesson-version-select') {
+      const selectEl = event.target;
+      const selectedVal = selectEl.value;
+      const targetDay = Number(appState.currentDay) || 1;
+      setActiveLessonVersionId(targetDay, selectedVal);
+      let activeLesson = null;
+
+      if (selectedVal === 'default') {
+        CurriculumContentEngine.setActiveVersion(targetDay, 'default');
+        activeLesson = CurriculumContentEngine.getDayLesson(targetDay);
+      } else {
+        const versions = await getCustomLessonVersions(targetDay);
+        const match = versions.find(v => v.id === selectedVal);
+        if (match) {
+          CurriculumContentEngine.setCustomLesson(match);
+          activeLesson = match;
+        } else {
+          activeLesson = CurriculumContentEngine.setActiveVersion(targetDay, selectedVal);
+        }
+      }
+
+      if (activeLesson && Array.isArray(activeLesson.chunks) && activeLesson.chunks.length > 0) {
+        if (!appState.flashcards) appState.flashcards = [];
+        appState.flashcards = appState.flashcards.filter(c => c.day !== targetDay);
+        activeLesson.chunks.forEach((item, idx) => {
+          appState.flashcards.push({
+            id: `card_d${targetDay}_custom_${idx}`,
+            day: targetDay,
+            chunk: item.en,
+            meaning: item.vi,
+            example: item.ex,
+            box: 1,
+            nextReview: Date.now()
+          });
+        });
+        saveState();
+      }
+
+      syncDaySpecificStudyViews(targetDay);
+      initStarterPack();
+      showToast(selectedVal === 'default' ? 'Đã chuyển về Bài học chuẩn' : 'Đã kích hoạt phiên bản bài học AI');
+    }
+  });
+
+  // Delete version handler via delegation
+  document.addEventListener('click', async (event) => {
+    const delBtn = event.target.closest('#btn-delete-current-version');
+    if (delBtn) {
+      const targetDay = Number(appState.currentDay) || 1;
+      const activeId = getActiveLessonVersionId(targetDay);
+      if (activeId === 'default') return;
+      if (!confirm(`Bạn có chắc muốn xóa phiên bản AI này của Day ${targetDay}?`)) return;
+      await deleteCustomLessonVersion(activeId, targetDay);
+      const newActive = getActiveLessonVersionId(targetDay);
+      CurriculumContentEngine.setActiveVersion(targetDay, newActive);
+      syncDaySpecificStudyViews(targetDay);
+      initStarterPack();
+      showToast('🗑️ Đã xóa phiên bản bài học AI.');
+    }
+  });
+
   loadState();
   initNavigation();
   initDashboard();
@@ -90,6 +181,34 @@ function loadState() {
     }
   }
 
+  // Load custom lessons from localStorage & Dexie
+  if (!appState.customLessons) appState.customLessons = {};
+  for (let d = 1; d <= 120; d++) {
+    const raw = localStorage.getItem(`c1_custom_lesson_${d}`);
+    if (raw) {
+      try {
+        const lesson = JSON.parse(raw);
+        if (lesson && lesson.day) {
+          appState.customLessons[lesson.day] = lesson;
+          CurriculumContentEngine.setCustomLesson(lesson);
+        }
+      } catch (e) {}
+    }
+  }
+
+  // Async load from Dexie for robust offline-first storage
+  getAllCustomLessonsLocal().then(lessons => {
+    if (Array.isArray(lessons) && lessons.length > 0) {
+      lessons.forEach(l => {
+        appState.customLessons[l.day] = l;
+        CurriculumContentEngine.setCustomLesson(l);
+      });
+      if (CurriculumContentEngine.hasCustomLesson(appState.currentDay)) {
+        syncDaySpecificStudyViews(appState.currentDay);
+      }
+    }
+  }).catch(err => console.warn('Could not load custom lessons from Dexie:', err));
+
   // Initialize preloaded flashcards from Starter Pack if empty
   if (!appState.flashcards || appState.flashcards.length === 0) {
     appState.flashcards = [];
@@ -110,11 +229,145 @@ function loadState() {
   }
 }
 
-export function getActiveSchedule() {
-  if (appState.customSchedule && Array.isArray(appState.customSchedule) && appState.customSchedule.length > 0) {
-    return appState.customSchedule;
+export function getDaySpecificSchedule(targetDay = appState.currentDay, baseSchedule = null) {
+  const dayNum = Number(targetDay) || appState.currentDay || 1;
+  const dayData = BOOTCAMP_DATA.roadmap.find(r => r.day === dayNum) || BOOTCAMP_DATA.roadmap[0];
+  const curLesson = CurriculumContentEngine.getDayLesson(dayNum);
+
+  // If active lesson is a custom AI lesson (or standard lesson with no customSchedule override), use its tailored scheduleBlocks
+  if (curLesson && Array.isArray(curLesson.scheduleBlocks) && curLesson.scheduleBlocks.length > 0) {
+    if (curLesson.isCustomAiLesson || (!appState.customSchedule || appState.customSchedule.length === 0)) {
+      return curLesson.scheduleBlocks.map((item, idx) => ({
+        ...item,
+        id: item.id || (idx + 1),
+        rawBlock: item.block,
+        rawOutput: item.output,
+        level: curLesson.level || dayData.level,
+        day: dayNum
+      }));
+    }
   }
-  return BOOTCAMP_DATA.dailySchedule;
+
+  const scheduleSource = baseSchedule || (
+    (appState.customSchedule && Array.isArray(appState.customSchedule) && appState.customSchedule.length > 0)
+      ? appState.customSchedule
+      : BOOTCAMP_DATA.dailySchedule
+  );
+
+  const starterData = BOOTCAMP_DATA.starterPack?.find(s => s.day === dayNum);
+
+  return scheduleSource.map((item) => {
+    const rawTitle = (item.block || item.title || '').toLowerCase();
+    const skill = (item.skill || '').toLowerCase();
+    let adaptedTitle = item.block;
+    let adaptedOutput = item.output;
+
+    // Detect block category
+    if (skill === 'grammar' || rawTitle.includes('grammar') || rawTitle.includes('ngữ pháp')) {
+      if (dayData.isWeeklyTest || dayData.isGate) {
+        adaptedTitle = `Tổng Ôn Ngữ Pháp: ${dayData.grammar}`;
+        adaptedOutput = `Củng cố toàn bộ điểm ngữ pháp: "${dayData.grammar}" & chuẩn bị kiểm tra`;
+      } else {
+        adaptedTitle = `Ngữ pháp: ${dayData.grammar}`;
+        adaptedOutput = `30–50 câu nói & viết áp dụng cấu trúc "${dayData.grammar}" (${dayData.level})`;
+      }
+    } else if (skill === 'listening' || rawTitle.includes('listening') || rawTitle.includes('nghe')) {
+      if (rawTitle.includes('extensive') || rawTitle.includes('conversation')) {
+        adaptedTitle = `Extensive Listening: VOA / Podcast (${dayData.level})`;
+        adaptedOutput = `60–90m nghe thụ cảm tự nhiên chủ đề "${dayData.vocab}" không phụ đề`;
+      } else {
+        if (starterData?.listening) {
+          adaptedTitle = `Nghe Chuyên Sâu: ${starterData.listening.title}`;
+          adaptedOutput = `Dictation bài "${starterData.listening.title}" + Trả lời câu hỏi hiểu + Shadowing 5 lần`;
+        } else if (dayData.isWeeklyTest || dayData.isGate) {
+          adaptedTitle = `Kiểm Tra Nghe Benchmark (${dayData.level})`;
+          adaptedOutput = `Nghe bài mới không chuẩn bị trước, phân tích lỗi nghe và tóm tắt`;
+        } else {
+          adaptedTitle = `Nghe Chuyên Sâu: Chủ đề ${dayData.vocab}`;
+          adaptedOutput = `Dictation 60–90s tài liệu ${dayData.level} + Shadowing ngữ điệu tự nhiên`;
+        }
+      }
+    } else if (skill === 'vocabulary' || rawTitle.includes('vocab') || rawTitle.includes('từ vựng') || rawTitle.includes('collocation') || rawTitle.includes('chunk')) {
+      if (dayData.isWeeklyTest || dayData.isGate) {
+        adaptedTitle = `Ôn Tập Toàn Bộ Chunks Tuần ${dayData.week}`;
+        adaptedOutput = `Active recall 100% chunks trong tuần, kiểm tra collocation và phản xạ`;
+      } else if (starterData?.chunks) {
+        adaptedTitle = `20 Chunks Ngày ${dayData.day}: ${dayData.vocab}`;
+        adaptedOutput = `Nạp 20 chunks chủ đề "${dayData.vocab}" + nghe mẫu TTS + lưu SRS`;
+      } else {
+        adaptedTitle = `Từ Vựng & Chunks: Chủ đề ${dayData.vocab}`;
+        adaptedOutput = `20 Target Chunks (${dayData.level}) + đặt câu ngữ cảnh thực tế`;
+      }
+    } else if (skill === 'reading' || rawTitle.includes('reading') || rawTitle.includes('đọc')) {
+      if (starterData?.reading) {
+        adaptedTitle = `Active Reading: ${starterData.reading.title}`;
+        adaptedOutput = `Tóm tắt: "${starterData.reading.prompt || starterData.reading.title}"`;
+      } else if (dayData.isWeeklyTest || dayData.isGate) {
+        adaptedTitle = `Đọc Hiểu Benchmark (${dayData.level})`;
+        adaptedOutput = `Đọc văn bản tính giờ, trích xuất 10 cụm từ C1/B2 và viết tóm tắt`;
+      } else {
+        adaptedTitle = `Active Reading: Chủ đề ${dayData.vocab}`;
+        adaptedOutput = `Đọc phân tích cấu trúc, trích 10 cụm collocations và viết tóm tắt 100–150 từ`;
+      }
+    } else if (skill === 'speaking' || rawTitle.includes('speaking') || rawTitle.includes('nói') || rawTitle.includes('pronunciation') || rawTitle.includes('phát âm')) {
+      if (dayData.isGate) {
+        adaptedTitle = `Phase Gate Speaking: ${dayData.speaking}`;
+        adaptedOutput = `Thu âm liên tục không dùng tài liệu theo tiêu chuẩn Gate (${dayData.level})`;
+      } else if (dayData.isWeeklyTest) {
+        adaptedTitle = `Weekly Speaking Review: ${dayData.speaking}`;
+        adaptedOutput = `Thu âm 5 phút nói không dùng giấy nhớ tổng kết tuần (Take 1 & Take 2)`;
+      } else {
+        adaptedTitle = `Speaking: ${dayData.speaking}`;
+        adaptedOutput = `Thu âm nói: "${dayData.speaking}" (Take 1 nháp → Take 2 hoàn thiện)`;
+      }
+    } else if (skill === 'writing' || rawTitle.includes('writing') || rawTitle.includes('viết')) {
+      const promptSnippet = (dayData.writing || '').replace(/^Write\s*/i, '');
+      const shortPrompt = promptSnippet.length > 38 ? promptSnippet.slice(0, 38) + '...' : promptSnippet;
+      if (dayData.isGate) {
+        adaptedTitle = `Gate Timed Writing (${dayData.level})`;
+        adaptedOutput = `Viết bài luận tính giờ: ${dayData.writing} (Chấm theo CEFR Rubric)`;
+      } else if (dayData.isWeeklyTest) {
+        adaptedTitle = `Weekly Review Writing: ${shortPrompt}`;
+        adaptedOutput = `Viết bài phản ánh tuần: ${dayData.writing}`;
+      } else {
+        adaptedTitle = `Writing: ${shortPrompt}`;
+        adaptedOutput = `Nhiệm vụ: ${dayData.writing} (Draft 1 → Phân tích lỗi → Rewrite Draft 2)`;
+      }
+    } else if (rawTitle.includes('immersion') || rawTitle.includes('entertainment')) {
+      adaptedTitle = `Immersion: Media & Phim (${dayData.level})`;
+      adaptedOutput = `Xem video/tin tức tiếng Anh tự nhiên + Ghi lại 5 cụm từ thú vị`;
+    } else if (rawTitle.includes('srs') || rawTitle.includes('error') || rawTitle.includes('sổ lỗi')) {
+      if (dayData.isWeeklyTest || dayData.isGate) {
+        adaptedTitle = `Đánh Giá Tuần & Reset Sổ Lỗi Vàng`;
+        adaptedOutput = `Tổng kết tuần, phân tích lỗi lặp lại ≥3 lần, lên kế hoạch cho tuần tới`;
+      } else {
+        adaptedTitle = `SRS Review & Sổ Lỗi Ngày ${dayData.day}`;
+        adaptedOutput = `Ôn toàn bộ thẻ SRS đến hạn + Ghi lỗi lặp lại + Viết nhật ký 3 dòng`;
+      }
+    }
+
+    return {
+      ...item,
+      rawBlock: item.block,
+      rawOutput: item.output,
+      block: adaptedTitle,
+      output: adaptedOutput,
+      level: dayData.level,
+      day: dayNum
+    };
+  });
+}
+
+export function getActiveSchedule(targetDay = appState.currentDay, options = {}) {
+  const baseSchedule = (appState.customSchedule && Array.isArray(appState.customSchedule) && appState.customSchedule.length > 0)
+    ? appState.customSchedule
+    : BOOTCAMP_DATA.dailySchedule;
+
+  if (options && options.raw) {
+    return baseSchedule;
+  }
+
+  return getDaySpecificSchedule(targetDay, baseSchedule);
 }
 
 export function saveState() {
@@ -246,20 +499,88 @@ function initNavigation() {
 }
 
 export function switchCurrentDay(newDay) {
-  appState.currentDay = newDay;
+  const dayNum = Number(newDay) || 1;
+  appState.currentDay = dayNum;
   saveState();
   updateHeaderDay();
   initDashboard();
   initStarterPack();
-  const drafts = appState.writingDrafts[newDay] || {};
+  syncDaySpecificStudyViews(dayNum);
+  if (typeof renderRoadmapGrid === 'function') renderRoadmapGrid();
+
+  // Re-render schedule list and timeline bar with day-specific content
+  renderScheduleList();
+  renderTimelineBarTrack();
+  updateTimelineTick();
+
+  showToast(`Đã chuyển sang Ngày ${dayNum} trong lộ trình!`);
+  loadRecordingsForCurrentDay();
+}
+
+export function syncDaySpecificStudyViews(targetDay = appState.currentDay) {
+  const dayNum = Number(targetDay) || 1;
+  const dayData = BOOTCAMP_DATA.roadmap.find(r => r.day === dayNum) || BOOTCAMP_DATA.roadmap[0];
+  const curLesson = CurriculumContentEngine.getDayLesson(dayNum);
+
+  // 1. Sync Speaking Studio Prompt & Recordings
+  const speakingPromptEl = document.getElementById('active-speaking-prompt-text');
+  if (speakingPromptEl) {
+    speakingPromptEl.textContent = `🎯 Day ${dayNum} (${dayData.level}): ${dayData.speaking || curLesson.speakingTask}`;
+  }
+
+  // 2. Sync Writing Studio Prompt & Drafts
+  const writingPromptEl = document.getElementById('active-writing-prompt-text');
+  if (writingPromptEl) {
+    writingPromptEl.textContent = `🎯 Day ${dayNum} (${dayData.level}): ${dayData.writing || curLesson.writingTask}`;
+  }
+  const drafts = appState.writingDrafts[dayNum] || {};
   for (const [id, key] of [['writing-draft-1', 'draft1'], ['writing-draft-2', 'draft2']]) {
     const field = document.getElementById(id);
     if (field) field.value = drafts[key] || '';
   }
   document.getElementById('writing-draft-1')?.dispatchEvent(new Event('input'));
-  if (typeof renderRoadmapGrid === 'function') renderRoadmapGrid();
-  showToast(`Đã chuyển sang Ngày ${newDay} trong lộ trình!`);
-  loadRecordingsForCurrentDay();
+
+  // 3. Render Lesson Content for current day
+  renderLessonContent(curLesson);
+
+  // 4. Update Header Day & Pill
+  updateHeaderDay();
+  const dayPill = document.getElementById('timeline-current-day-pill');
+  if (dayPill) {
+    dayPill.textContent = `Day ${dayNum} (${dayData.level})`;
+  }
+
+  // 5. Update timeline current objective text
+  const currentSchedule = getActiveSchedule(dayNum);
+  const now = new Date();
+  const curSecs = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+  const activeBlock = currentSchedule.find(b => {
+    const rawTime = b.time || '';
+    const parts = (rawTime.includes('–') ? rawTime.split('–') : rawTime.split('-')).map(s => s.trim());
+    const [sH, sM] = (parts[0] || '07:00').split(':').map(Number);
+    const [eH, eM] = (parts[1] || '08:30').split(':').map(Number);
+    return curSecs >= (sH * 3600 + sM * 60) && curSecs < (eH * 3600 + eM * 60);
+  });
+
+  const objTextEl = document.getElementById('timeline-current-objective-text');
+  if (objTextEl) {
+    if (activeBlock) {
+      objTextEl.textContent = `${activeBlock.block}: ${activeBlock.output}`;
+    } else {
+      objTextEl.textContent = `🎯 Mục tiêu Day ${dayNum} (${dayData.level}): Ngữ pháp "${dayData.grammar}" & ${dayData.vocab}`;
+    }
+  }
+
+  const objJumpBtn = document.getElementById('timeline-obj-jump-btn');
+  if (objJumpBtn) {
+    objJumpBtn.onclick = () => {
+      reviewAndStudyBlock(activeBlock || currentSchedule[0]);
+    };
+  }
+
+  // Refresh schedule panel and timeline bar to reflect day-specific/custom AI blocks
+  renderScheduleList();
+  renderTimelineBarTrack();
 }
 
 function updateHeaderDay() {
@@ -500,7 +821,6 @@ function initRoadmap() {
 
 function openDayDetailModal(dayItem) {
   const isCompleted = appState.completedDays.includes(dayItem.day);
-  const starterAvailable = dayItem.day <= 7;
 
   openModal(`Chi Tiết Lộ Trình: Day ${dayItem.day} (${dayItem.level})`, `
     <div class="flex flex-col gap-[16px]" >
@@ -541,11 +861,15 @@ function openDayDetailModal(dayItem) {
         <button class="btn-secondary" data-action="complete-day" data-day="${dayItem.day}">
           ${isCompleted ? '↩️ Đánh dấu Chưa Hoàn Thành' : '✅ Đánh dấu Đã Hoàn Thành'}
         </button>
-        ${starterAvailable ? `
-          <button class="btn-secondary [border-color:var(--accent-amber)] text-accent-amber"  data-action="lesson-day" data-day="${dayItem.day}">
-            📚 Mở Bài Học Starter Pack
-          </button>
-        ` : ''}
+        <button class="btn-secondary [border-color:var(--accent-amber)] text-accent-amber" data-action="lesson-day" data-day="${dayItem.day}">
+          📚 Mở Bài Học Chi Tiết (Day ${dayItem.day})
+        </button>
+        <button class="btn-secondary text-accent-cyan [border-color:rgba(6,182,212,0.4)]" data-action="copy-prompt" data-day="${dayItem.day}">
+          📋 Copy Prompt AI
+        </button>
+        <button class="btn-secondary text-brand-light [border-color:rgba(99,102,241,0.4)]" data-action="import-lesson" data-day="${dayItem.day}">
+          🤖 Nhập Bài Học Từ AI
+        </button>
       </div>
     </div>
   `);
@@ -699,21 +1023,32 @@ function updateTimerDisplay() {
 
 export function reviewAndStudyBlock(block) {
   if (!block) return;
+  const targetDay = Number(block.day) || appState.currentDay || 1;
+  if (targetDay !== appState.currentDay) {
+    appState.currentDay = targetDay;
+    saveState();
+    updateHeaderDay();
+  }
+
+  // Synchronize all study views to the target day
+  syncDaySpecificStudyViews(targetDay);
+
   const title = (block.block || block.title || '').toLowerCase();
+  const rawTitle = (block.rawBlock || '').toLowerCase();
+  const skill = (block.skill || '').toLowerCase();
+  const checkText = `${title} ${rawTitle} ${skill}`;
   let targetRoute = 'dashboard';
   let timerDuration = block.durationMinutes || 90;
 
-  if (title.includes('speaking') || title.includes('nói')) {
+  if (checkText.includes('speaking') || checkText.includes('nói') || checkText.includes('phát âm') || checkText.includes('pronunciation')) {
     targetRoute = 'speaking';
-  } else if (title.includes('ngữ pháp') || title.includes('grammar')) {
+  } else if (checkText.includes('ngữ pháp') || checkText.includes('grammar')) {
     targetRoute = 'grammar';
-  } else if (title.includes('phát âm') || title.includes('ipa') || title.includes('pronunciation')) {
-    targetRoute = 'pronunciation';
-  } else if (title.includes('writing') || title.includes('viết')) {
+  } else if (checkText.includes('writing') || checkText.includes('viết')) {
     targetRoute = 'writing';
-  } else if (title.includes('srs') || title.includes('flashcard') || title.includes('từ vựng') || title.includes('vocab')) {
+  } else if (checkText.includes('srs') || checkText.includes('flashcard') || checkText.includes('từ vựng') || checkText.includes('vocab') || checkText.includes('chunk')) {
     targetRoute = 'flashcards';
-  } else if (title.includes('listening') || title.includes('reading') || title.includes('nghe') || title.includes('đọc') || title.includes('immersion')) {
+  } else if (checkText.includes('listening') || checkText.includes('reading') || checkText.includes('nghe') || checkText.includes('đọc') || checkText.includes('immersion')) {
     targetRoute = 'lessons';
   }
 
@@ -725,7 +1060,28 @@ export function reviewAndStudyBlock(block) {
   document.querySelector(`.nav-link[data-target="${targetRoute}"]`)?.click();
   window.location.hash = `#/${targetRoute}`;
 
-  showToast(`🚀 Đang mở công cụ học lại: ${block.block || block.title} (${timerDuration} phút)!`);
+  if (targetRoute === 'lessons') {
+    setTimeout(() => {
+      let targetSectionId = 'block-section-listening';
+      if (checkText.includes('grammar') || checkText.includes('ngữ pháp')) targetSectionId = 'block-section-grammar';
+      else if (checkText.includes('chunk') || checkText.includes('collocation') || checkText.includes('20')) targetSectionId = 'block-section-chunks';
+      else if (checkText.includes('reading') || checkText.includes('đọc')) targetSectionId = 'block-section-reading';
+      else if (checkText.includes('speaking') || checkText.includes('nói')) targetSectionId = 'block-section-speaking';
+      else if (checkText.includes('writing') || checkText.includes('viết')) targetSectionId = 'block-section-writing';
+      else if (checkText.includes('extensive') || checkText.includes('hội thoại') || checkText.includes('thảo luận')) targetSectionId = 'block-section-extensive';
+      else if (checkText.includes('immersion') || checkText.includes('thực chiến') || checkText.includes('đời thực')) targetSectionId = 'block-section-immersion';
+      else if (checkText.includes('srs') || checkText.includes('sổ lỗi') || checkText.includes('phản tư')) targetSectionId = 'block-section-srs';
+
+      const sec = document.getElementById(targetSectionId);
+      if (sec) {
+        sec.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        sec.style.boxShadow = '0 0 25px rgba(99, 102, 241, 0.7)';
+        setTimeout(() => { sec.style.boxShadow = ''; }, 1500);
+      }
+    }, 200);
+  }
+
+  showToast(`🚀 Đang mở công cụ học Day ${targetDay}: ${block.block || block.title} (${timerDuration} phút)!`);
 }
 
 export function renderScheduleList() {
@@ -733,6 +1089,8 @@ export function renderScheduleList() {
   if (!container) return;
 
   const currentSchedule = getActiveSchedule();
+  const dayNum = appState.currentDay || 1;
+  const dayData = BOOTCAMP_DATA.roadmap.find(r => r.day === dayNum) || BOOTCAMP_DATA.roadmap[0];
 
   const titleEl = document.getElementById('sidebar-schedule-title');
   if (titleEl) {
@@ -742,7 +1100,7 @@ export function renderScheduleList() {
   if (hintEl && currentSchedule.length > 0) {
     const firstTime = (currentSchedule[0].time || '').split(/–|-/)[0]?.trim() || '07:00';
     const lastTime = (currentSchedule[currentSchedule.length - 1].time || '').split(/–|-/)[1]?.trim() || '23:00';
-    hintEl.textContent = `${firstTime}–${lastTime}`;
+    hintEl.textContent = `Day ${dayNum} (${dayData.level}) • ${firstTime}–${lastTime}`;
   }
 
   const timelineTitleEl = document.getElementById('global-timeline-title');
@@ -760,7 +1118,10 @@ export function renderScheduleList() {
     item.innerHTML = `
       <div class="block-time">${block.time}</div>
       <div class="block-info">
-        <div class="block-title">${block.block}</div>
+        <div class="block-title flex items-center justify-between gap-1">
+          <span>${block.block}</span>
+          ${block.level ? `<span class="text-[10px] px-1.5 py-0.5 rounded bg-indigo-500/20 text-indigo-300 font-bold uppercase">${block.level}</span>` : ''}
+        </div>
         <div class="block-output">🎯 Mục tiêu: ${block.output}</div>
       </div>
       <div class="mode-tag ${(block.mode || 'DEEP').toLowerCase()}">${block.mode || 'DEEP'}</div>
@@ -907,6 +1268,7 @@ export function renderTimelineBarTrack() {
       num: String(blk.idx),
       shortName: cleanTitle || blk.block,
       label: `${blk.block} (${blk.time})`,
+      output: blk.output,
       mode: (blk.mode || 'DEEP').toLowerCase(),
       durM: blk.durM
     });
@@ -931,7 +1293,7 @@ export function renderTimelineBarTrack() {
     const el = document.createElement('div');
     el.className = `timeline-block-seg ${seg.mode}`;
     el.style.width = `${segWidthPct}%`;
-    el.title = `${seg.label} • ${seg.durM} phút`;
+    el.title = seg.output ? `${seg.label} • Mục tiêu: ${seg.output} • ${seg.durM} phút` : `${seg.label} • ${seg.durM} phút`;
 
     if (seg.type === 'block') {
       el.id = `timeline-seg-${seg.id}`;
@@ -1203,6 +1565,43 @@ export function updateTimelineTick() {
       jumpBtn.style.display = 'none';
     }
   }
+
+  // Update timeline objective banner
+  const timelineObjText = document.getElementById('timeline-current-objective-text');
+  const timelineDayPill = document.getElementById('timeline-current-day-pill');
+  const timelineObjJump = document.getElementById('timeline-obj-jump-btn');
+
+  const curDayNum = appState.currentDay || 1;
+  const curDayData = BOOTCAMP_DATA.roadmap.find(r => r.day === curDayNum) || BOOTCAMP_DATA.roadmap[0];
+
+  if (timelineDayPill) {
+    timelineDayPill.textContent = `Day ${curDayNum} (${curDayData.level})`;
+  }
+
+  if (activeBlock) {
+    if (timelineObjText) {
+      timelineObjText.textContent = `${activeBlock.block}: ${activeBlock.output}`;
+    }
+    if (timelineObjJump) {
+      timelineObjJump.style.display = 'inline-flex';
+      timelineObjJump.onclick = () => reviewAndStudyBlock(activeBlock);
+    }
+  } else if (currentTotalMins >= 420 && currentTotalMins < 1380) {
+    if (timelineObjText) {
+      timelineObjText.textContent = `☕ Giải lao phục hồi năng lượng • Tiếp theo: ${nextBlock ? `${nextBlock.time} ${nextBlock.block}` : 'Nghỉ ngơi'}`;
+    }
+    if (timelineObjJump && nextBlock) {
+      timelineObjJump.style.display = 'inline-flex';
+      timelineObjJump.onclick = () => reviewAndStudyBlock(nextBlock);
+    }
+  } else {
+    if (timelineObjText) {
+      timelineObjText.textContent = `🌙 Giấc ngủ sâu bắt buộc (7.5–9 tiếng) để củng cố trí nhớ dài hạn`;
+    }
+    if (timelineObjJump) {
+      timelineObjJump.style.display = 'none';
+    }
+  }
 }
 
 function getToolJumpForBlock(blockId) {
@@ -1293,32 +1692,76 @@ function renderProtocols(protocolKey) {
 }
 
 // ==========================================================================
-// 6. Starter Pack & Interactive Lessons (Days 1–7)
+// 6. Curriculum Lessons & Starter Pack (Days 1–120)
 // ==========================================================================
 function initStarterPack() {
   const navContainer = document.getElementById('lesson-days-nav');
   if (!navContainer) return;
 
   navContainer.innerHTML = '';
-  BOOTCAMP_DATA.starterPack.forEach(lesson => {
+
+  const curDay = Number(appState.currentDay) || 1;
+  const curWeek = Math.ceil(curDay / 7);
+  const startDay = (curWeek - 1) * 7 + 1;
+  const endDay = Math.min(120, curWeek * 7);
+
+  // Week Controls & Jump Dropdown
+  const weekControls = document.createElement('div');
+  weekControls.className = 'flex items-center gap-2 mb-3 w-full flex-wrap';
+  weekControls.innerHTML = `
+    <span class="text-xs font-bold text-accent-cyan">Tuần ${curWeek} (Day ${startDay}–${endDay}):</span>
+    <select id="lesson-week-select" class="form-select text-xs py-1 px-2.5 rounded bg-slate-800 text-white border border-slate-700">
+      ${Array.from({ length: 18 }, (_, i) => `<option value="${i + 1}" ${i + 1 === curWeek ? 'selected' : ''}>Tuần ${i + 1} (Day ${(i * 7) + 1}–${Math.min(120, (i + 1) * 7)})</option>`).join('')}
+    </select>
+    <select id="lesson-day-jump-select" class="form-select text-xs py-1 px-2.5 rounded bg-slate-800 text-white border border-slate-700">
+      ${Array.from({ length: 120 }, (_, i) => `<option value="${i + 1}" ${i + 1 === curDay ? 'selected' : ''}>Nhảy tới Day ${i + 1}</option>`).join('')}
+    </select>
+  `;
+
+  navContainer.appendChild(weekControls);
+
+  const daysRow = document.createElement('div');
+  daysRow.className = 'flex gap-2 overflow-x-auto w-full pb-1';
+
+  for (let d = startDay; d <= endDay; d++) {
+    const dayLesson = CurriculumContentEngine.getDayLesson(d);
+    const isCustom = CurriculumContentEngine.hasCustomLesson(d);
     const btn = document.createElement('button');
-    btn.className = `lesson-day-btn ${lesson.day === appState.currentDay ? 'active' : ''}`;
-    btn.textContent = `Day ${lesson.day}: ${lesson.theme}`;
+    btn.className = `lesson-day-btn ${d === curDay ? 'active' : ''} ${isCustom ? 'border-emerald-500/50 text-emerald-300' : ''}`;
+    btn.textContent = `${isCustom ? '✨ ' : ''}Day ${d}: ${dayLesson.theme}`;
 
     btn.addEventListener('click', () => {
       document.querySelectorAll('.lesson-day-btn').forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
-      renderLessonContent(lesson);
+      switchCurrentDay(d);
     });
 
-    navContainer.appendChild(btn);
-  });
+    daysRow.appendChild(btn);
+  }
+  navContainer.appendChild(daysRow);
 
-  const activeLesson = BOOTCAMP_DATA.starterPack.find(l => l.day === appState.currentDay) || BOOTCAMP_DATA.starterPack[0];
+  const weekSelect = weekControls.querySelector('#lesson-week-select');
+  if (weekSelect) {
+    weekSelect.addEventListener('change', (e) => {
+      const targetW = Number(e.target.value);
+      const targetFirstDay = (targetW - 1) * 7 + 1;
+      switchCurrentDay(targetFirstDay);
+    });
+  }
+
+  const dayJumpSelect = weekControls.querySelector('#lesson-day-jump-select');
+  if (dayJumpSelect) {
+    dayJumpSelect.addEventListener('change', (e) => {
+      switchCurrentDay(Number(e.target.value));
+    });
+  }
+
+  const activeLesson = CurriculumContentEngine.getDayLesson(curDay);
   renderLessonContent(activeLesson);
 }
 
 function renderLessonContent(lesson) {
+  if (!lesson) return;
   const titleEl = document.getElementById('lesson-theme-title');
   const grammarEl = document.getElementById('lesson-grammar-title');
   const chunksContainer = document.getElementById('lesson-chunks-container');
@@ -1329,12 +1772,67 @@ function renderLessonContent(lesson) {
   const readingPromptEl = document.getElementById('lesson-reading-prompt');
   const speakingTaskEl = document.getElementById('lesson-speaking-task');
   const writingTaskEl = document.getElementById('lesson-writing-task');
+  const mediaEmbedContainer = document.getElementById('lesson-media-embed-container');
 
   if (titleEl) titleEl.textContent = `Day ${lesson.day}: ${lesson.theme}`;
   if (grammarEl) grammarEl.textContent = `Ngữ pháp mục tiêu: ${lesson.grammar}`;
 
+  // Media Embed (VOA / LibriVox / Audio / Video)
+  if (mediaEmbedContainer) {
+    const media = lesson.mediaEmbed;
+    if (media && (media.embedUrl || media.youtubeId || media.streamUrl || media.audioUrl)) {
+      mediaEmbedContainer.classList.remove('hidden');
+      const isVideo = media.type === 'video' || !!media.embedUrl || !!media.youtubeId;
+      const videoSrc = media.embedUrl || (media.youtubeId ? `https://www.youtube-nocookie.com/embed/${media.youtubeId}` : '');
+      const audioSrc = media.streamUrl || media.audioUrl || '';
+      const provider = media.provider || media.source || 'Học liệu mở';
+
+      if (isVideo && videoSrc) {
+        mediaEmbedContainer.innerHTML = `
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-indigo-500/30">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-rose-400 font-bold text-xs">🎬 Video Học Liệu:</span>
+                <span class="text-white font-semibold text-xs">${media.title}</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-rose-500/20 text-rose-300 uppercase">${provider}</span>
+              </div>
+              ${media.externalUrl ? `<a href="${media.externalUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] text-cyan-400 hover:underline">Mở video gốc ↗</a>` : ''}
+            </div>
+            <div class="aspect-video w-full max-w-xl mx-auto rounded-lg overflow-hidden border border-white/10">
+              <iframe
+                class="w-full h-full"
+                src="${videoSrc}"
+                title="${media.title}"
+                frameborder="0"
+                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                allowfullscreen
+              ></iframe>
+            </div>
+          </div>
+        `;
+      } else if (audioSrc) {
+        mediaEmbedContainer.innerHTML = `
+          <div class="p-3 bg-slate-900/80 rounded-xl border border-emerald-500/30">
+            <div class="flex items-center justify-between mb-2">
+              <div class="flex items-center gap-2">
+                <span class="text-emerald-400 font-bold text-xs">🎧 Sách Nói / Audio:</span>
+                <span class="text-white font-semibold text-xs">${media.title}</span>
+                <span class="text-[9px] px-1.5 py-0.5 rounded bg-emerald-500/20 text-emerald-300 uppercase">${provider}</span>
+              </div>
+              ${media.externalUrl ? `<a href="${media.externalUrl}" target="_blank" rel="noopener noreferrer" class="text-[11px] text-cyan-400 hover:underline">Mở sách ↗</a>` : ''}
+            </div>
+            <audio controls class="w-full mt-1" src="${audioSrc}"></audio>
+          </div>
+        `;
+      }
+    } else {
+      mediaEmbedContainer.classList.add('hidden');
+      mediaEmbedContainer.innerHTML = '';
+    }
+  }
+
   // Chunks list
-  if (chunksContainer) {
+  if (chunksContainer && Array.isArray(lesson.chunks)) {
     chunksContainer.innerHTML = '';
     lesson.chunks.forEach(c => {
       const row = document.createElement('div');
@@ -1360,8 +1858,8 @@ function renderLessonContent(lesson) {
   }
 
   // Listening
-  if (listeningTitleEl) listeningTitleEl.textContent = lesson.listening.title;
-  if (listeningScriptEl) {
+  if (listeningTitleEl) listeningTitleEl.textContent = lesson.listening ? lesson.listening.title : `Intensive Listening Day ${lesson.day}`;
+  if (listeningScriptEl && lesson.listening) {
     listeningScriptEl.textContent = lesson.listening.script;
     listeningScriptEl.classList.add('blur-content'); // Hide transcript by default for active listening!
   }
@@ -1375,14 +1873,14 @@ function renderLessonContent(lesson) {
   }
 
   const playScriptTTSBtn = document.getElementById('play-script-tts-btn');
-  if (playScriptTTSBtn) {
+  if (playScriptTTSBtn && lesson.listening) {
     playScriptTTSBtn.onclick = () => {
       speakText(lesson.listening.script);
     };
   }
 
   // Questions
-  if (questionsContainer) {
+  if (questionsContainer && lesson.listening && Array.isArray(lesson.listening.questions)) {
     questionsContainer.innerHTML = '';
     lesson.listening.questions.forEach((q, idx) => {
       const qBox = document.createElement('div');
@@ -1396,12 +1894,331 @@ function renderLessonContent(lesson) {
   }
 
   // Reading
-  if (readingTextEl) readingTextEl.textContent = lesson.reading.text;
-  if (readingPromptEl) readingPromptEl.textContent = lesson.reading.prompt;
+  if (readingTextEl && lesson.reading) readingTextEl.textContent = lesson.reading.text || '';
+  if (readingPromptEl && lesson.reading) readingPromptEl.textContent = lesson.reading.prompt || '';
 
   // Tasks
-  if (speakingTaskEl) speakingTaskEl.textContent = lesson.speakingTask;
-  if (writingTaskEl) writingTaskEl.textContent = lesson.writingTask;
+  if (speakingTaskEl) speakingTaskEl.textContent = lesson.speakingTask || lesson.speaking?.prompt || '';
+  if (writingTaskEl) writingTaskEl.textContent = lesson.writingTask || lesson.writing?.prompt || '';
+
+  // 1. Render Block 1: Grammar Details & Sentence Drills
+  const grammarExpEl = document.getElementById('lesson-grammar-explanation');
+  if (grammarExpEl) {
+    grammarExpEl.textContent = lesson.grammarDetail?.explanation || `Lý thuyết cấu trúc: ${lesson.grammar}`;
+  }
+  const grammarRulesList = document.getElementById('lesson-grammar-rules-list');
+  if (grammarRulesList && lesson.grammarDetail?.rules) {
+    grammarRulesList.innerHTML = lesson.grammarDetail.rules.map(r => `<li>${r}</li>`).join('');
+  }
+  const grammarDrillsContainer = document.getElementById('lesson-grammar-drills-container');
+  if (grammarDrillsContainer) {
+    grammarDrillsContainer.innerHTML = '';
+    const drills = lesson.grammarDetail?.sentenceDrills || [
+      { drill: `Đặt 1 câu phức áp dụng "${lesson.grammar}"`, answer: `Example sentence demonstrating ${lesson.grammar}.` }
+    ];
+    drills.forEach((d, idx) => {
+      const dItem = document.createElement('div');
+      dItem.className = 'p-2.5 rounded bg-slate-950/60 border border-indigo-500/20 text-xs';
+      dItem.innerHTML = `
+        <div class="flex items-start justify-between gap-2">
+          <div class="font-medium text-slate-200">
+            <span class="text-indigo-400 font-bold">Câu ${idx + 1}:</span> ${d.drill}
+          </div>
+          <button class="btn-toggle-drill-ans text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 hover:bg-indigo-500/30 text-indigo-300 whitespace-nowrap">
+            👁️ Xem đáp án
+          </button>
+        </div>
+        <div class="drill-answer-box hidden mt-2 pt-1.5 border-t border-white/5 text-emerald-300 font-mono text-[11px]">
+          💡 <strong>Đáp án mẫu:</strong> ${d.answer}
+        </div>
+      `;
+      const ansBox = dItem.querySelector('.drill-answer-box');
+      const toggleBtn = dItem.querySelector('.btn-toggle-drill-ans');
+      toggleBtn.onclick = () => {
+        const isHidden = ansBox.classList.toggle('hidden');
+        toggleBtn.textContent = isHidden ? '👁️ Xem đáp án' : '🙈 Ẩn đáp án';
+      };
+      grammarDrillsContainer.appendChild(dItem);
+    });
+  }
+
+  // 2. Render Block 2: Shadowing Focus
+  const shadowingFocusEl = document.getElementById('lesson-listening-shadowing-focus');
+  if (shadowingFocusEl) {
+    shadowingFocusEl.textContent = lesson.listening?.shadowingFocus || 'Luyện nối âm tự nhiên và nhịp điệu trọng âm câu.';
+  }
+
+  // 4. Render Block 4: Active Reading Title & Vocab Focus
+  const readingTitleEl = document.getElementById('lesson-reading-title');
+  if (readingTitleEl) readingTitleEl.textContent = lesson.reading?.title || `Active Reading (Day ${lesson.day})`;
+  const readingVocabTags = document.getElementById('lesson-reading-vocab-tags');
+  if (readingVocabTags) {
+    readingVocabTags.innerHTML = '';
+    const vocabList = Array.isArray(lesson.reading?.vocabularyFocus) ? lesson.reading.vocabularyFocus : [];
+    if (vocabList.length > 0) {
+      vocabList.forEach(v => {
+        const span = document.createElement('span');
+        span.className = 'text-[11px] px-2 py-0.5 rounded bg-blue-500/20 text-blue-200 border border-blue-500/30 font-mono';
+        span.textContent = v;
+        readingVocabTags.appendChild(span);
+      });
+    } else {
+      readingVocabTags.innerHTML = `<span class="text-[11px] text-slate-400">Trích xuất collocations tự nhiên trong bài</span>`;
+    }
+  }
+
+  // 5. Render Block 5: Speaking Studio Outline & Pronunciation
+  const spkOutlineEl = document.getElementById('lesson-speaking-outline');
+  if (spkOutlineEl && lesson.speaking?.outline) {
+    spkOutlineEl.innerHTML = lesson.speaking.outline.map(o => `<li>${o}</li>`).join('');
+  }
+  const spkPronEl = document.getElementById('lesson-speaking-pronunciation');
+  if (spkPronEl) {
+    spkPronEl.textContent = lesson.speaking?.pronunciationTips || 'Giữ trường độ nguyên âm dài, phát âm rõ âm đuôi và nối âm tự nhiên.';
+  }
+  const spkFollowupEl = document.getElementById('lesson-speaking-followup');
+  if (spkFollowupEl) {
+    spkFollowupEl.innerHTML = '';
+    const followups = Array.isArray(lesson.speaking?.followUpQuestions) ? lesson.speaking.followUpQuestions : ['How does this apply in practice?'];
+    followups.forEach((q, idx) => {
+      const qDiv = document.createElement('div');
+      qDiv.className = 'p-1.5 rounded bg-slate-900/40 border border-white/5';
+      qDiv.innerHTML = `❓ <strong>Q${idx + 1}:</strong> ${q}`;
+      spkFollowupEl.appendChild(qDiv);
+    });
+  }
+
+  // 6. Render Block 6: Writing Studio Outline & Samples
+  const wrtOutlineEl = document.getElementById('lesson-writing-outline');
+  if (wrtOutlineEl) {
+    wrtOutlineEl.textContent = lesson.writing?.outline || 'Introduction (Thesis) → Body Paragraphs → Conclusion (Synthesis).';
+  }
+  const wrtTargetsEl = document.getElementById('lesson-writing-targets');
+  if (wrtTargetsEl) {
+    const targets = Array.isArray(lesson.writing?.targetStructures) ? lesson.writing.targetStructures : [`Ứng dụng cấu trúc ${lesson.grammar}`];
+    wrtTargetsEl.innerHTML = targets.map(t => `<li>${t}</li>`).join('');
+  }
+  const wrtSampleEl = document.getElementById('lesson-writing-sample');
+  if (wrtSampleEl) {
+    wrtSampleEl.textContent = lesson.writing?.sampleSnippet || `In contemporary discourse, the subject of ${lesson.vocab || 'this topic'} requires rigorous lexical choice and syntactic variety.`;
+  }
+
+  // 7. Render Block 7: Extensive Listening & Conversation
+  const extTitleEl = document.getElementById('lesson-extensive-title');
+  if (extTitleEl) extTitleEl.textContent = lesson.extensiveListening?.title || 'Extensive Listening & Discussion';
+  const extDescEl = document.getElementById('lesson-extensive-desc');
+  if (extDescEl) extDescEl.textContent = lesson.extensiveListening?.description || '60–90 phút nghe thụ cảm tự nhiên và thảo luận phản biện không phụ đề.';
+  const extQuestionsEl = document.getElementById('lesson-extensive-questions');
+  if (extQuestionsEl) {
+    const qList = Array.isArray(lesson.extensiveListening?.discussionQuestions) ? lesson.extensiveListening.discussionQuestions : [];
+    extQuestionsEl.innerHTML = qList.map(q => `<div class="p-1 rounded bg-slate-900/40">💬 ${q}</div>`).join('');
+  }
+  const extSourcesEl = document.getElementById('lesson-extensive-sources');
+  if (extSourcesEl) extSourcesEl.textContent = lesson.extensiveListening?.recommendedSources || 'BBC 6 Minute English, NPR News, TED Radio Hour';
+
+  // 8. Render Block 8: Immersion & Real-world Expressions
+  const immCtxEl = document.getElementById('lesson-immersion-context');
+  if (immCtxEl) immCtxEl.textContent = lesson.immersion?.context || `Bối cảnh thực tế công sở và đời sống quốc tế.`;
+  const immExpressionsEl = document.getElementById('lesson-immersion-expressions');
+  if (immExpressionsEl) {
+    immExpressionsEl.innerHTML = '';
+    const expressions = Array.isArray(lesson.immersion?.realWorldExpressions) ? lesson.immersion.realWorldExpressions : [];
+    expressions.forEach(e => {
+      const eCard = document.createElement('div');
+      eCard.className = 'p-2 rounded bg-slate-900/60 border border-teal-500/20';
+      eCard.innerHTML = `
+        <div class="font-bold text-teal-300 text-xs flex items-center justify-between">
+          <span>${e.phrase}</span>
+          <button class="tts-inline-btn text-[10px] text-cyan-400 hover:underline" data-text="${e.phrase}">🔊 Nghe</button>
+        </div>
+        <div class="text-[11px] text-slate-300 mt-0.5">${e.meaning}</div>
+        <div class="text-[10px] text-slate-400 italic mt-0.5">📌 ${e.situation}</div>
+      `;
+      eCard.querySelector('.tts-inline-btn').onclick = () => speakText(e.phrase);
+      immExpressionsEl.appendChild(eCard);
+    });
+  }
+  const immMediaTipEl = document.getElementById('lesson-immersion-media-tip');
+  if (immMediaTipEl) immMediaTipEl.textContent = lesson.immersion?.mediaSuggestion || 'Xem phóng sự VOA / BBC / Bloomberg liên quan.';
+
+  // 9. Render Block 9: SRS & Error Log Reflection
+  const srsPitfallsEl = document.getElementById('lesson-srs-pitfalls');
+  if (srsPitfallsEl) {
+    const pitfalls = Array.isArray(lesson.srsAndErrorLog?.commonPitfalls) ? lesson.srsAndErrorLog.commonPitfalls : ['Lỗi dịch word-by-word'];
+    srsPitfallsEl.innerHTML = pitfalls.map(p => `<li>${p}</li>`).join('');
+  }
+  const srsRemindersEl = document.getElementById('lesson-srs-reminders');
+  if (srsRemindersEl) srsRemindersEl.textContent = lesson.srsAndErrorLog?.reviewReminders || 'Ôn tập 20 target chunks mới trên SRS và bổ sung lỗi sai vào sổ lỗi.';
+  const srsQuestionsEl = document.getElementById('lesson-reflection-questions');
+  if (srsQuestionsEl) {
+    const qList = Array.isArray(lesson.srsAndErrorLog?.reflectionQuestions) ? lesson.srsAndErrorLog.reflectionQuestions : [];
+    srsQuestionsEl.innerHTML = qList.map((q, i) => `<div>${i + 1}. ${q}</div>`).join('');
+  }
+  const dailyReflInput = document.getElementById('lesson-daily-reflection-input');
+  if (dailyReflInput) {
+    dailyReflInput.value = localStorage.getItem(`c1_reflection_day_${lesson.day}`) || '';
+  }
+  const saveReflBtn = document.getElementById('btn-save-daily-reflection');
+  if (saveReflBtn) {
+    saveReflBtn.onclick = () => {
+      if (dailyReflInput) {
+        localStorage.setItem(`c1_reflection_day_${lesson.day}`, dailyReflInput.value);
+        showToast(`💾 Đã lưu nhật ký phản tư Day ${lesson.day}!`);
+      }
+    };
+  }
+
+  // Custom AI Lesson Indicators & Actions
+  const sourceBadge = document.getElementById('lesson-source-badge');
+  const restoreBtn = document.getElementById('btn-restore-default-lesson');
+  const copyPromptBtn = document.getElementById('btn-copy-day-prompt');
+  const isCustom = CurriculumContentEngine.hasCustomLesson(lesson.day);
+
+  if (sourceBadge) {
+    if (isCustom) {
+      sourceBadge.classList.remove('hidden');
+      sourceBadge.textContent = '✨ Bài Học AI (Đã Lưu & Đồng Bộ)';
+    } else {
+      sourceBadge.classList.add('hidden');
+    }
+  }
+
+  if (restoreBtn) {
+    if (isCustom) {
+      restoreBtn.classList.remove('hidden');
+      restoreBtn.onclick = () => restoreDefaultLesson(lesson.day);
+    } else {
+      restoreBtn.classList.add('hidden');
+    }
+  }
+
+  if (copyPromptBtn) {
+    copyPromptBtn.onclick = async () => {
+      try {
+        const prompt = generateDayLessonPrompt(lesson.day);
+        await navigator.clipboard.writeText(prompt);
+        showToast(`📋 Đã copy prompt Cambridge C1 cho Day ${lesson.day}!`);
+      } catch (e) {
+        showToast(`Lỗi sao chép: Hãy mở modal Nhập bài học để copy.`);
+      }
+    };
+  }
+
+  // Render Version Selector for current day
+  renderLessonVersionSelector(lesson.day);
+}
+
+export async function renderLessonVersionSelector(dayNum) {
+  const targetDay = Number(dayNum) || appState.currentDay || 1;
+  const selectEl = document.getElementById('lesson-version-select');
+  const countEl = document.getElementById('lesson-version-count');
+  const deleteBtn = document.getElementById('btn-delete-current-version');
+  if (!selectEl) return;
+
+  const versions = await getCustomLessonVersions(targetDay);
+  const activeId = getActiveLessonVersionId(targetDay);
+
+  selectEl.innerHTML = '';
+
+  // 1. Standard Default Lesson Option
+  const defaultOpt = document.createElement('option');
+  defaultOpt.value = 'default';
+  defaultOpt.textContent = '📌 Bài học chuẩn (Standard Bootcamp)';
+  if (activeId === 'default' || versions.length === 0) {
+    defaultOpt.selected = true;
+  }
+  selectEl.appendChild(defaultOpt);
+
+  // 2. Add each AI Version
+  versions.forEach((ver, index) => {
+    const opt = document.createElement('option');
+    opt.value = ver.id;
+    const timeStr = ver.createdAt ? dayjs(ver.createdAt).format('HH:mm DD/MM') : '';
+    opt.textContent = `✨ ${ver.theme} ${timeStr ? `[${timeStr}]` : ''}`;
+    if (activeId === ver.id) {
+      opt.selected = true;
+    }
+    selectEl.appendChild(opt);
+  });
+
+  if (countEl) {
+    countEl.textContent = `(${versions.length > 0 ? `${versions.length} bản AI + 1 bản chuẩn` : '1 bản có sẵn'})`;
+  }
+
+  // Update Delete button visibility
+  if (deleteBtn) {
+    if (activeId !== 'default' && versions.length > 0) {
+      deleteBtn.classList.remove('hidden');
+    } else {
+      deleteBtn.classList.add('hidden');
+    }
+  }
+}
+
+export async function restoreDefaultLesson(dayNum) {
+  const targetDay = Number(dayNum) || appState.currentDay || 1;
+  try {
+    await deleteCustomLessonLocal(targetDay);
+    localStorage.removeItem(`c1_custom_lesson_${targetDay}`);
+    localStorage.removeItem(`c1_custom_lesson_versions_${targetDay}`);
+    setActiveLessonVersionId(targetDay, 'default');
+    CurriculumContentEngine.removeCustomLesson(targetDay);
+    if (appState.customLessons) {
+      delete appState.customLessons[targetDay];
+    }
+
+    syncDaySpecificStudyViews(targetDay);
+    initStarterPack();
+    showToast(`↩️ Đã khôi phục bài học gốc chuẩn cho Day ${targetDay}`);
+  } catch (err) {
+    console.error('Error restoring default lesson:', err);
+    showToast(`Không thể khôi phục: ${err.message}`);
+  }
+}
+
+if (typeof window !== 'undefined') {
+  window.addEventListener('custom-lesson-applied', (e) => {
+    const lesson = e.detail;
+    if (!lesson || !lesson.day) return;
+
+    // 1. Ensure engine and storage have it active
+    setActiveLessonVersionId(lesson.day, lesson.id);
+    CurriculumContentEngine.setCustomLesson(lesson);
+
+    // 2. If user is currently on another day, switch to lesson day!
+    if (appState.currentDay !== lesson.day) {
+      switchCurrentDay(lesson.day);
+    }
+
+    // 3. Auto navigate to lessons tab if on another page
+    const lessonsNavBtn = document.querySelector('.nav-link[data-target=lessons]');
+    if (lessonsNavBtn && !lessonsNavBtn.classList.contains('active')) {
+      lessonsNavBtn.click();
+      window.location.hash = '#/lessons';
+    }
+
+    // 4. Update Flashcards with new chunks
+    if (Array.isArray(lesson.chunks) && lesson.chunks.length > 0) {
+      if (!appState.flashcards) appState.flashcards = [];
+      appState.flashcards = appState.flashcards.filter(c => c.day !== lesson.day);
+      lesson.chunks.forEach((item, idx) => {
+        appState.flashcards.push({
+          id: `card_d${lesson.day}_custom_${idx}`,
+          day: lesson.day,
+          chunk: item.en,
+          meaning: item.vi,
+          example: item.ex,
+          box: 1,
+          nextReview: Date.now()
+        });
+      });
+      saveState();
+    }
+
+    // 5. Force re-render of lesson and all views
+    syncDaySpecificStudyViews(lesson.day);
+    initStarterPack();
+  });
 }
 
 // ==========================================================================

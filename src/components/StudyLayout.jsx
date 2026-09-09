@@ -11,10 +11,12 @@ import GrammarLessonModal from '@/components/grammar/GrammarLessonModal';
 import WritingDiffModal from '@/components/writing/WritingDiffModal';
 import SrsScheduleModal from '@/components/srs/SrsScheduleModal';
 import WeeklyReportModal from '@/components/report/WeeklyReportModal';
+import ImportLessonModal from '@/components/lessons/ImportLessonModal';
 import DashboardPage from '@/pages/DashboardPage';
 import RoadmapPage from '@/pages/RoadmapPage';
 import SchedulePage from '@/pages/SchedulePage';
 import LessonsPage from '@/pages/LessonsPage';
+import ContentHubPage from '@/pages/ContentHubPage';
 import SpeakingPage from '@/pages/SpeakingPage';
 import WritingPage from '@/pages/WritingPage';
 import FlashcardsPage from '@/pages/FlashcardsPage';
@@ -35,6 +37,8 @@ export default memo(function StudyLayout() {
   const [showWeeklyReport, setShowWeeklyReport] = useState(false);
   const [showGrammarModal, setShowGrammarModal] = useState(false);
   const [selectedGrammar, setSelectedGrammar] = useState(null);
+  const [showImportLesson, setShowImportLesson] = useState(false);
+  const [importLessonDay, setImportLessonDay] = useState(1);
 
   useEffect(() => {
     const handleOpenScheduleEditor = () => setShowScheduleEditor(true);
@@ -47,12 +51,21 @@ export default memo(function StudyLayout() {
         setShowGrammarModal(true);
       }
     };
+    const handleOpenImportLesson = (e) => {
+      if (e.detail && e.detail.day) {
+        setImportLessonDay(Number(e.detail.day));
+      } else {
+        setImportLessonDay(appState.currentDay || 1);
+      }
+      setShowImportLesson(true);
+    };
 
     window.addEventListener('open-schedule-editor', handleOpenScheduleEditor);
     window.addEventListener('open-writing-diff', handleOpenWritingDiff);
     window.addEventListener('open-srs-schedule', handleOpenSrsSchedule);
     window.addEventListener('open-weekly-report', handleOpenWeeklyReport);
     window.addEventListener('open-grammar-lesson', handleOpenGrammarLesson);
+    window.addEventListener('open-import-lesson-modal', handleOpenImportLesson);
 
     return () => {
       window.removeEventListener('open-schedule-editor', handleOpenScheduleEditor);
@@ -60,6 +73,7 @@ export default memo(function StudyLayout() {
       window.removeEventListener('open-srs-schedule', handleOpenSrsSchedule);
       window.removeEventListener('open-weekly-report', handleOpenWeeklyReport);
       window.removeEventListener('open-grammar-lesson', handleOpenGrammarLesson);
+      window.removeEventListener('open-import-lesson-modal', handleOpenImportLesson);
     };
   }, []);
   return (<>
@@ -98,6 +112,11 @@ export default memo(function StudyLayout() {
 <li className="nav-link" data-target="lessons" data-title="Starter Pack (Tuần 1)">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
 <span>{"Starter Pack (Tuần 1)"}</span>
+</li>
+<li className="nav-link" data-target="content-hub" data-title="Kho Tài Nguyên & Luyện Tập">
+<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path><path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path></svg>
+<span>{"Kho Tài Nguyên & Luyện Tập"}</span>
+<span className="nav-badge">{"PACK"}</span>
 </li>
 <li className="nav-link" data-target="speaking" data-title="Phòng Thu Speaking">
 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"></path><path d="M19 10v2a7 7 0 0 1-14 0v-2"></path><line x1="12" y1="19" x2="12" y2="23"></line><line x1="8" y1="23" x2="16" y2="23"></line></svg>
@@ -247,6 +266,18 @@ export default memo(function StudyLayout() {
 <span>{"21:00"}</span>
 <span>{"23:00"}</span>
 </div>
+<div className="timeline-objective-banner" id="timeline-current-objective-bar">
+  <div className="timeline-obj-content">
+    <span className="timeline-obj-badge">{"🎯 Mục tiêu khối:"}</span>
+    <span className="timeline-obj-text" id="timeline-current-objective-text">{"Đang xác định mục tiêu đầu ra của khối..."}</span>
+  </div>
+  <div className="timeline-obj-meta">
+    <span className="timeline-obj-day-pill" id="timeline-current-day-pill">{"Day 1"}</span>
+    <Button variant="unstyled" className="timeline-obj-jump-btn" id="timeline-obj-jump-btn">
+      <span>{"🚀 Mở công cụ"}</span>
+    </Button>
+  </div>
+</div>
 </div>
 </div>
 
@@ -265,6 +296,7 @@ export default memo(function StudyLayout() {
 
 
 <LessonsPage />
+<ContentHubPage />
 
 
 
@@ -472,5 +504,10 @@ export default memo(function StudyLayout() {
 <WritingDiffModal isOpen={showWritingDiff} onClose={() => setShowWritingDiff(false)} />
 <SrsScheduleModal isOpen={showSrsSchedule} onClose={() => setShowSrsSchedule(false)} />
 <WeeklyReportModal isOpen={showWeeklyReport} onClose={() => setShowWeeklyReport(false)} />
+<ImportLessonModal
+  isOpen={showImportLesson}
+  dayNum={importLessonDay}
+  onClose={() => setShowImportLesson(false)}
+/>
 <ChibiCompanionWidget />
 </>); });

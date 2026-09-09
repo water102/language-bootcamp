@@ -1,0 +1,5 @@
+https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences.tsv.bz2
+https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_CC0.tsv.bz2
+https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_with_audio.tsv.bz2
+https://downloads.tatoeba.org/exports/per_language/eng/eng-vie_links.tsv.bz2
+https://downloads.tatoeba.org/exports/per_language/vie/vie_sentences.tsv.bz2

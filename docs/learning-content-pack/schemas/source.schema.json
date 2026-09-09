@@ -1,0 +1,12 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"ContentSource",
+  "type":"object",
+  "required":["id","name","deliveryModes","licenseClass","home"],
+  "properties":{
+    "id":{"type":"string"},"name":{"type":"string"},"provider":{"type":"string"},
+    "deliveryModes":{"type":"array","items":{"enum":["native","embed","external"]}},
+    "licenseClass":{"type":"string"},"home":{"type":"string","format":"uri"},
+    "criticalRule":{"type":"string"}
+  }
+}

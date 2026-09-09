@@ -1,0 +1,193 @@
+[
+  {
+    "id": "cambridge-free-activities",
+    "sourceId": "cambridge-english",
+    "deliveryMode": "external",
+    "url": "https://www.cambridgeenglish.org/supporting-learners/",
+    "skills": [
+      "mixed"
+    ],
+    "levels": [
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1"
+    ],
+    "note": "Free activity directory; do not mirror exercises."
+  },
+  {
+    "id": "british-council-learnenglish",
+    "sourceId": "british-council-learnenglish",
+    "deliveryMode": "external",
+    "url": "https://learnenglish.britishcouncil.org/",
+    "skills": [
+      "listening",
+      "reading",
+      "writing",
+      "speaking",
+      "grammar",
+      "vocabulary"
+    ],
+    "levels": [
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1"
+    ],
+    "note": "Deep-link only unless explicit permission says otherwise."
+  },
+  {
+    "id": "voa-learning-english-home",
+    "sourceId": "voa-learning-english",
+    "deliveryMode": "external",
+    "url": "https://learningenglish.voanews.com/",
+    "skills": [
+      "listening",
+      "reading",
+      "vocabulary",
+      "grammar"
+    ],
+    "levels": [
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1"
+    ]
+  },
+  {
+    "id": "librivox-catalog",
+    "sourceId": "librivox",
+    "deliveryMode": "external",
+    "url": "https://librivox.org/search",
+    "skills": [
+      "listening"
+    ],
+    "levels": [
+      "B1",
+      "B2",
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "id": "project-gutenberg-catalog",
+    "sourceId": "project-gutenberg",
+    "deliveryMode": "external",
+    "url": "https://www.gutenberg.org/ebooks/",
+    "skills": [
+      "reading"
+    ],
+    "levels": [
+      "B1",
+      "B2",
+      "C1",
+      "C2"
+    ]
+  },
+  {
+    "id": "voa-lets-learn-english-1",
+    "sourceId": "voa-learning-english",
+    "deliveryMode": "native-or-external-after-rights-check",
+    "url": "https://learningenglish.voanews.com/p/5644.html",
+    "skills": [
+      "listening",
+      "speaking",
+      "vocabulary",
+      "writing"
+    ],
+    "levels": [
+      "A1",
+      "A2"
+    ],
+    "note": "52-week beginner course; VOA page states video, worksheets, assessments and lesson plans are included. Verify each asset is VOA-produced before hosting."
+  },
+  {
+    "id": "voa-lets-learn-english-1-plans",
+    "sourceId": "voa-learning-english",
+    "deliveryMode": "native-or-external-after-rights-check",
+    "url": "https://learningenglish.voanews.com/a/6220041.html",
+    "skills": [
+      "mixed"
+    ],
+    "levels": [
+      "A1",
+      "A2"
+    ],
+    "note": "Lesson-plan collection for Level 1."
+  },
+  {
+    "id": "elllo",
+    "sourceId": "external-elllo",
+    "deliveryMode": "external",
+    "url": "https://www.elllo.org/",
+    "skills": [
+      "listening",
+      "vocabulary",
+      "grammar"
+    ],
+    "levels": [
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1"
+    ],
+    "note": "3000+ free listening lessons; copyrighted site content, so treat as external unless explicit reuse permission is established."
+  },
+  {
+    "id": "randall-esl-lab",
+    "sourceId": "external-randall-esl",
+    "deliveryMode": "external",
+    "url": "https://www.esl-lab.com/",
+    "skills": [
+      "listening",
+      "speaking",
+      "grammar"
+    ],
+    "levels": [
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1"
+    ],
+    "note": "500+ listening activities. Site FAQ prohibits copying/reproducing/redistributing code, text or audio; deep-link only."
+  },
+  {
+    "id": "randall-study-guide",
+    "sourceId": "external-randall-esl",
+    "deliveryMode": "external",
+    "url": "https://www.esl-lab.com/study-guide/",
+    "skills": [
+      "listening"
+    ],
+    "levels": [
+      "A1",
+      "A2",
+      "B1",
+      "B2",
+      "C1"
+    ],
+    "note": "Topic/level-organized study guide; link only."
+  },
+  {
+    "id": "ted-talks",
+    "sourceId": "external-ted",
+    "deliveryMode": "external",
+    "url": "https://www.ted.com/talks",
+    "skills": [
+      "listening",
+      "reading"
+    ],
+    "levels": [
+      "B1",
+      "B2",
+      "C1",
+      "C2"
+    ],
+    "note": "Many talks have interactive transcripts. Treat as external unless using an explicitly permitted embed."
+  }
+]

@@ -1,0 +1,97 @@
+[
+  {
+    "sourceId": "cefrj",
+    "role": "vocabulary-levels",
+    "url": "https://raw.githubusercontent.com/openlanguageprofiles/olp-en-cefrj/master/cefrj-vocabulary-profile-1.5.csv",
+    "format": "csv",
+    "approx": "7800 lines"
+  },
+  {
+    "sourceId": "cefrj",
+    "role": "grammar-levels",
+    "url": "https://raw.githubusercontent.com/openlanguageprofiles/olp-en-cefrj/master/cefrj-grammar-profile-20180315.csv",
+    "format": "csv",
+    "approx": "501 lines"
+  },
+  {
+    "sourceId": "cefrj",
+    "role": "c1-c2-vocabulary",
+    "url": "https://raw.githubusercontent.com/openlanguageprofiles/olp-en-cefrj/master/octanove-vocabulary-profile-c1c2-1.0.csv",
+    "format": "csv",
+    "approx": "2137 lines",
+    "license": "CC BY-SA 4.0"
+  },
+  {
+    "sourceId": "open-english-wordnet",
+    "role": "lexical-db",
+    "url": "https://en-word.net/downloads/english-wordnet-2025-json.zip",
+    "format": "zip/json",
+    "approx": "9.5 MB"
+  },
+  {
+    "sourceId": "tatoeba",
+    "role": "english-sentences",
+    "url": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences.tsv.bz2",
+    "format": "tsv.bz2",
+    "observedSizeBytes": 24867402
+  },
+  {
+    "sourceId": "tatoeba",
+    "role": "english-cc0-sentences",
+    "url": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_CC0.tsv.bz2",
+    "format": "tsv.bz2",
+    "observedSizeBytes": 1288331
+  },
+  {
+    "sourceId": "tatoeba",
+    "role": "english-audio-metadata",
+    "url": "https://downloads.tatoeba.org/exports/per_language/eng/eng_sentences_with_audio.tsv.bz2",
+    "format": "tsv.bz2",
+    "observedSizeBytes": 4087879
+  },
+  {
+    "sourceId": "tatoeba",
+    "role": "english-vietnamese-links",
+    "url": "https://downloads.tatoeba.org/exports/per_language/eng/eng-vie_links.tsv.bz2",
+    "format": "tsv.bz2",
+    "observedSizeBytes": 140138
+  },
+  {
+    "sourceId": "tatoeba",
+    "role": "vietnamese-sentences",
+    "url": "https://downloads.tatoeba.org/exports/per_language/vie/vie_sentences.tsv.bz2",
+    "format": "tsv.bz2"
+  },
+  {
+    "sourceId": "project-gutenberg",
+    "role": "catalog",
+    "url": "https://www.gutenberg.org/cache/epub/feeds/pg_catalog.csv.gz",
+    "format": "csv.gz",
+    "approx": "5.3 MB"
+  },
+  {
+    "sourceId": "project-gutenberg",
+    "role": "rdf-catalog",
+    "url": "https://www.gutenberg.org/cache/epub/feeds/rdf-files.tar.bz2",
+    "format": "tar.bz2",
+    "approx": "121 MB",
+    "optional": true
+  },
+  {
+    "sourceId": "librivox",
+    "role": "catalog-api",
+    "url": "https://librivox.org/api/feed/audiobooks",
+    "format": "api",
+    "params": [
+      "id",
+      "since",
+      "author",
+      "title",
+      "genre",
+      "extended",
+      "coverart",
+      "limit",
+      "offset"
+    ]
+  }
+]

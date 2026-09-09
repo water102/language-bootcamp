@@ -500,6 +500,38 @@ body.schedule-collapsed .main-wrapper {
   @apply select-none;
 }
 
+/* Timeline Current Objective Banner */
+.timeline-objective-banner {
+  @apply mt-2.5 px-3.5 py-2 rounded-lg flex items-center justify-between gap-3 text-xs;
+  background: linear-gradient(90deg, rgba(99, 102, 241, 0.12), rgba(6, 182, 212, 0.08));
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.05);
+}
+
+.timeline-obj-content {
+  @apply flex items-center gap-2 overflow-hidden;
+}
+
+.timeline-obj-badge {
+  @apply font-bold text-accent-amber shrink-0 flex items-center gap-1;
+}
+
+.timeline-obj-text {
+  @apply text-white font-medium truncate;
+}
+
+.timeline-obj-meta {
+  @apply flex items-center gap-2 shrink-0;
+}
+
+.timeline-obj-day-pill {
+  @apply px-2 py-0.5 rounded bg-[rgba(99,102,241,0.2)] text-brand-light font-bold text-[11px];
+}
+
+.timeline-obj-jump-btn {
+  @apply px-2.5 py-1 rounded bg-brand text-white font-semibold text-[11px] hover:bg-brand-light transition flex items-center gap-1 cursor-pointer;
+}
+
 /* Page Views Container */
 .page-view {
   @apply hidden p-[32px];

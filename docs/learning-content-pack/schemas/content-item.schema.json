@@ -1,0 +1,22 @@
+{
+  "$schema":"https://json-schema.org/draft/2020-12/schema",
+  "title":"ContentItem",
+  "type":"object",
+  "required":["id","sourceId","deliveryMode","contentType","skills","originalUrl","rights","provenance"],
+  "properties":{
+    "id":{"type":"string"},
+    "sourceId":{"type":"string"},
+    "externalId":{"type":["string","number","null"]},
+    "deliveryMode":{"enum":["native","embed","external"]},
+    "contentType":{"type":"string"},
+    "title":{"type":"string"},
+    "originalUrl":{"type":"string"},
+    "levels":{"type":"array","items":{"enum":["A1","A2","B1","B2","C1","C2"]}},
+    "levelConfidence":{"type":"number","minimum":0,"maximum":1},
+    "skills":{"type":"array","items":{"type":"string"}},
+    "topics":{"type":"array","items":{"type":"string"}},
+    "durationMinutes":{"type":["number","null"]},
+    "rights":{"type":"object","required":["status"],"properties":{"status":{"enum":["HOST_ALLOWED","EMBED_ONLY","LINK_ONLY","BLOCKED","MANUAL_REVIEW"]},"license":{"type":["string","null"]},"attribution":{"type":["string","null"]}}},
+    "provenance":{"type":"object","required":["sourceUrl","verifiedAt"],"properties":{"sourceUrl":{"type":"string"},"verifiedAt":{"type":"string"}}}
+  }
+}

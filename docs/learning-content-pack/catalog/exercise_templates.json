@@ -1,0 +1,506 @@
+[
+  {
+    "id": "vocab-definition-mcq",
+    "skill": "vocabulary",
+    "kind": "definition_to_word",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-word-definition",
+    "skill": "vocabulary",
+    "kind": "word_to_definition",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-synonym",
+    "skill": "vocabulary",
+    "kind": "synonym",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-semantic-related",
+    "skill": "vocabulary",
+    "kind": "semantic_relation",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-pos",
+    "skill": "vocabulary",
+    "kind": "pos",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-context-cloze",
+    "skill": "vocabulary",
+    "kind": "cloze",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-spelling",
+    "skill": "vocabulary",
+    "kind": "spelling",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-en-vi",
+    "skill": "vocabulary",
+    "kind": "translation_recognition",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-vi-en",
+    "skill": "vocabulary",
+    "kind": "translation_production",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "vocab-word-family",
+    "skill": "vocabulary",
+    "kind": "derivation",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "sentence-cloze",
+    "skill": "grammar",
+    "kind": "cloze",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "sentence-multicloze",
+    "skill": "grammar",
+    "kind": "multi_cloze",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "sentence-reorder",
+    "skill": "grammar",
+    "kind": "word_order",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "sentence-en-vi",
+    "skill": "reading",
+    "kind": "translation",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "sentence-vi-en",
+    "skill": "writing",
+    "kind": "translation",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "sentence-repair",
+    "skill": "writing",
+    "kind": "repair",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "sentence-target-word",
+    "skill": "vocabulary",
+    "kind": "highlight",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "dictation-full",
+    "skill": "listening",
+    "kind": "dictation",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "dictation-partial",
+    "skill": "listening",
+    "kind": "partial_dictation",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "shadowing",
+    "skill": "speaking",
+    "kind": "shadowing",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "read-aloud",
+    "skill": "speaking",
+    "kind": "read_aloud",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "listen-transcript-choice",
+    "skill": "listening",
+    "kind": "transcript_choice",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "listen-missing-word",
+    "skill": "listening",
+    "kind": "missing_word",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "listen-sequence",
+    "skill": "listening",
+    "kind": "sequence",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "listen-detail",
+    "skill": "listening",
+    "kind": "detail",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "listen-retell",
+    "skill": "speaking",
+    "kind": "retell",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-main-idea",
+    "skill": "reading",
+    "kind": "main_idea",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-detail",
+    "skill": "reading",
+    "kind": "detail",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-vocab-context",
+    "skill": "reading",
+    "kind": "vocab_context",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-reference",
+    "skill": "reading",
+    "kind": "reference",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-heading",
+    "skill": "reading",
+    "kind": "heading_match",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-order",
+    "skill": "reading",
+    "kind": "paragraph_order",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-summary",
+    "skill": "writing",
+    "kind": "summary",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "reading-true-false",
+    "skill": "reading",
+    "kind": "true_false",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "grammar-identify",
+    "skill": "grammar",
+    "kind": "identify",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "grammar-form",
+    "skill": "grammar",
+    "kind": "choose_form",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "grammar-transform",
+    "skill": "grammar",
+    "kind": "transformation",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "grammar-error",
+    "skill": "grammar",
+    "kind": "error_correction",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "grammar-contrast",
+    "skill": "grammar",
+    "kind": "contrast",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "grammar-production",
+    "skill": "writing",
+    "kind": "production",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "video-pre-vocab",
+    "skill": "listening",
+    "kind": "pre_vocab",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  },
+  {
+    "id": "video-summary-retell",
+    "skill": "speaking",
+    "kind": "summary_retell",
+    "version": 1,
+    "autoGeneratable": true,
+    "requires": [],
+    "validation": [
+      "single_intended_answer_when_objective",
+      "source_provenance"
+    ]
+  }
+]

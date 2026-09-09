@@ -1,0 +1,179 @@
+[
+  {
+    "id": "cefrj",
+    "name": "CEFR-J English Profiles",
+    "provider": "Tono Laboratory / Open Language Profiles",
+    "deliveryModes": [
+      "native"
+    ],
+    "trust": "curated",
+    "licenseClass": "citation-required",
+    "commercialUse": true,
+    "derivatives": true,
+    "bulkAccess": true,
+    "home": "https://github.com/openlanguageprofiles/olp-en-cefrj",
+    "recommendedUse": [
+      "cefr_tagging",
+      "vocabulary",
+      "grammar"
+    ]
+  },
+  {
+    "id": "open-english-wordnet",
+    "name": "Open English WordNet",
+    "provider": "Open English WordNet community",
+    "deliveryModes": [
+      "native"
+    ],
+    "trust": "curated",
+    "licenseClass": "CC-BY-4.0",
+    "commercialUse": true,
+    "derivatives": true,
+    "bulkAccess": true,
+    "home": "https://en-word.net/downloads",
+    "recommendedUse": [
+      "definitions",
+      "synsets",
+      "relations",
+      "vocabulary_exercises"
+    ]
+  },
+  {
+    "id": "tatoeba",
+    "name": "Tatoeba",
+    "provider": "Tatoeba community",
+    "deliveryModes": [
+      "native",
+      "external"
+    ],
+    "trust": "community",
+    "licenseClass": "mixed-creative-commons",
+    "commercialUse": "per-item/dataset",
+    "derivatives": "per-item/dataset",
+    "bulkAccess": true,
+    "home": "https://tatoeba.org/en/downloads",
+    "recommendedUse": [
+      "sentences",
+      "translations",
+      "audio",
+      "dictation",
+      "shadowing"
+    ],
+    "criticalRule": "Audio with blank license MUST NOT be reused outside Tatoeba."
+  },
+  {
+    "id": "voa-learning-english",
+    "name": "VOA Learning English",
+    "provider": "Voice of America",
+    "deliveryModes": [
+      "native",
+      "embed",
+      "external"
+    ],
+    "trust": "official",
+    "licenseClass": "public-domain-when-exclusively-VOA-produced",
+    "commercialUse": "conditional",
+    "derivatives": "conditional",
+    "bulkAccess": "curated ingestion",
+    "home": "https://learningenglish.voanews.com/",
+    "recommendedUse": [
+      "multimedia_lessons",
+      "listening",
+      "reading"
+    ],
+    "criticalRule": "Do not republish AP/Reuters/AFP or other third-party copyrighted assets."
+  },
+  {
+    "id": "project-gutenberg",
+    "name": "Project Gutenberg",
+    "provider": "Project Gutenberg",
+    "deliveryModes": [
+      "native",
+      "external"
+    ],
+    "trust": "official",
+    "licenseClass": "public-domain-oriented-jurisdiction-dependent",
+    "commercialUse": "per-work/jurisdiction",
+    "derivatives": "per-work/jurisdiction",
+    "bulkAccess": true,
+    "home": "https://www.gutenberg.org/",
+    "recommendedUse": [
+      "extensive_reading"
+    ],
+    "criticalRule": "Use offline catalog/mirrors/robot endpoints; do not spider the human site."
+  },
+  {
+    "id": "librivox",
+    "name": "LibriVox",
+    "provider": "LibriVox",
+    "deliveryModes": [
+      "native",
+      "external"
+    ],
+    "trust": "official",
+    "licenseClass": "public-domain-US-jurisdiction-dependent",
+    "commercialUse": "jurisdiction-dependent",
+    "derivatives": "jurisdiction-dependent",
+    "bulkAccess": true,
+    "home": "https://librivox.org/",
+    "recommendedUse": [
+      "extensive_listening",
+      "audiobooks"
+    ]
+  },
+  {
+    "id": "youtube",
+    "name": "YouTube",
+    "provider": "YouTube / individual channels",
+    "deliveryModes": [
+      "embed",
+      "external"
+    ],
+    "trust": "platform",
+    "licenseClass": "provider-hosted",
+    "commercialUse": "API/player terms",
+    "derivatives": false,
+    "bulkAccess": "metadata only",
+    "home": "https://www.youtube.com/",
+    "recommendedUse": [
+      "video",
+      "listening"
+    ],
+    "criticalRule": "Official embed only; do not download/cache audiovisual content."
+  },
+  {
+    "id": "cambridge-english",
+    "name": "Cambridge English free activities",
+    "provider": "Cambridge English",
+    "deliveryModes": [
+      "external"
+    ],
+    "trust": "official",
+    "licenseClass": "copyrighted-external-only",
+    "commercialUse": false,
+    "derivatives": false,
+    "bulkAccess": false,
+    "home": "https://www.cambridgeenglish.org/supporting-learners/",
+    "recommendedUse": [
+      "external_practice",
+      "placement"
+    ]
+  },
+  {
+    "id": "british-council-learnenglish",
+    "name": "British Council LearnEnglish",
+    "provider": "British Council",
+    "deliveryModes": [
+      "external"
+    ],
+    "trust": "official",
+    "licenseClass": "copyrighted-external-only",
+    "commercialUse": false,
+    "derivatives": false,
+    "bulkAccess": false,
+    "home": "https://learnenglish.britishcouncil.org/",
+    "recommendedUse": [
+      "external_practice"
+    ]
+  }
+]
