@@ -12,6 +12,10 @@ import WritingDiffModal from '@/components/writing/WritingDiffModal';
 import SrsScheduleModal from '@/components/srs/SrsScheduleModal';
 import WeeklyReportModal from '@/components/report/WeeklyReportModal';
 import ImportLessonModal from '@/components/lessons/ImportLessonModal';
+import CloudLibraryModal from '@/components/lessons/CloudLibraryModal';
+import TimelineStrip from '@/components/timeline/TimelineStrip';
+import ScheduleSidebar from '@/components/schedule/ScheduleSidebar';
+import LanShareModal from '@/components/sharing/LanShareModal';
 import DashboardPage from '@/pages/DashboardPage';
 import RoadmapPage from '@/pages/RoadmapPage';
 import SchedulePage from '@/pages/SchedulePage';
@@ -39,6 +43,8 @@ export default memo(function StudyLayout() {
   const [selectedGrammar, setSelectedGrammar] = useState(null);
   const [showImportLesson, setShowImportLesson] = useState(false);
   const [importLessonDay, setImportLessonDay] = useState(1);
+  const [showCloudLibrary, setShowCloudLibrary] = useState(false);
+  const [showLanShareModal, setShowLanShareModal] = useState(false);
 
   useEffect(() => {
     const handleOpenScheduleEditor = () => setShowScheduleEditor(true);
@@ -51,6 +57,8 @@ export default memo(function StudyLayout() {
         setShowGrammarModal(true);
       }
     };
+    const handleOpenCloudLibrary = () => setShowCloudLibrary(true);
+    const handleOpenLanShare = () => setShowLanShareModal(true);
     const handleOpenImportLesson = (e) => {
       if (e.detail && e.detail.day) {
         setImportLessonDay(Number(e.detail.day));
@@ -66,6 +74,8 @@ export default memo(function StudyLayout() {
     window.addEventListener('open-weekly-report', handleOpenWeeklyReport);
     window.addEventListener('open-grammar-lesson', handleOpenGrammarLesson);
     window.addEventListener('open-import-lesson-modal', handleOpenImportLesson);
+    window.addEventListener('open-cloud-library-modal', handleOpenCloudLibrary);
+    window.addEventListener('open-lan-share', handleOpenLanShare);
 
     return () => {
       window.removeEventListener('open-schedule-editor', handleOpenScheduleEditor);
@@ -74,6 +84,8 @@ export default memo(function StudyLayout() {
       window.removeEventListener('open-weekly-report', handleOpenWeeklyReport);
       window.removeEventListener('open-grammar-lesson', handleOpenGrammarLesson);
       window.removeEventListener('open-import-lesson-modal', handleOpenImportLesson);
+      window.removeEventListener('open-cloud-library-modal', handleOpenCloudLibrary);
+      window.removeEventListener('open-lan-share', handleOpenLanShare);
     };
   }, []);
   return (<>
@@ -217,69 +229,18 @@ export default memo(function StudyLayout() {
 <span>{"📊"}</span>
 <span className="btn-text">{"Báo Cáo"}</span>
 </Button>
-<Button variant="unstyled" className="header-action-btn" id="toggle-schedule-panel-btn" title="Ẩn/Hiện Lịch 12H & Timers bên phải">
+<Button variant="unstyled" className="header-action-btn" id="btn-lan-share" title="Học trên điện thoại & thiết bị LAN (QR Code)" onClick={() => setShowLanShareModal(true)}>
+<span>{"📱"}</span>
+<span className="btn-text">{"Học Mobile"}</span>
+</Button>
+<Button variant="unstyled" className="header-action-btn" id="toggle-schedule-panel-btn" title="Ẩn/Hiện Lịch 12H & Timers bên phải" onClick={() => document.body.classList.toggle('schedule-collapsed')}>
 <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 14 14"></polyline></svg>
 <span className="btn-text">{"Lịch 12H & Timers"}</span>
 </Button>
 </div>
 </header>
 
-
-
-<div className="global-timeline-strip" id="global-timeline-strip">
-<div className="global-timeline-header">
-<div className="gt-header-left">
-<span className="live-pulse-dot"></span>
-<span className="gt-title" id="global-timeline-title">{"Tiến Trình 12 Giờ Trong Ngày"}</span>
-<span className="timeline-active-tag deep" id="timeline-active-tag">{"⚡ Khối 5: Speaking + pronunciation"}</span>
-<Button variant="unstyled" className="icon-tool-btn text-[12px] px-2.5 py-1 bg-[rgba(255,255,255,0.08)] rounded hover:bg-[rgba(255,255,255,0.15)] text-[#cbd5e1] flex items-center gap-1 ml-2 transition" id="timeline-edit-schedule-btn" title="Chỉnh sửa lịch học (Kéo thả, đổi giờ, B1->C1 8H)" onClick={() => setShowScheduleEditor(true)}>
-<span>{"✏️ Sửa lịch"}</span>
-</Button>
-</div>
-<div className="gt-header-right">
-<div className="timeline-legend-inline">
-<span className="legend-item"><span className="legend-dot deep"></span>{"Deep (7–8h)"}</span>
-<span className="legend-item"><span className="legend-dot medium"></span>{"Medium (2–3h)"}</span>
-<span className="legend-item"><span className="legend-dot light"></span>{"Light (1–2h)"}</span>
-<span className="legend-item"><span className="legend-dot break"></span>{"Nghỉ & Ăn"}</span>
-</div>
-</div>
-</div>
-<div className="global-timeline-body">
-<div className="timeline-track-container">
-<div className="timeline-bar-track full-width" id="daily-timeline-bar-track">
-
-<div className="timeline-needle left-[0%]" id="timeline-live-needle" >
-<div className="needle-flag" id="needle-flag-text">{"00:00"}</div>
-<div className="needle-line"></div>
-</div>
-</div>
-</div>
-<div className="timeline-time-ruler">
-<span>{"07:00"}</span>
-<span>{"09:00"}</span>
-<span>{"11:00"}</span>
-<span>{"13:00"}</span>
-<span>{"15:00"}</span>
-<span>{"17:00"}</span>
-<span>{"19:00"}</span>
-<span>{"21:00"}</span>
-<span>{"23:00"}</span>
-</div>
-<div className="timeline-objective-banner" id="timeline-current-objective-bar">
-  <div className="timeline-obj-content">
-    <span className="timeline-obj-badge">{"🎯 Mục tiêu khối:"}</span>
-    <span className="timeline-obj-text" id="timeline-current-objective-text">{"Đang xác định mục tiêu đầu ra của khối..."}</span>
-  </div>
-  <div className="timeline-obj-meta">
-    <span className="timeline-obj-day-pill" id="timeline-current-day-pill">{"Day 1"}</span>
-    <Button variant="unstyled" className="timeline-obj-jump-btn" id="timeline-obj-jump-btn">
-      <span>{"🚀 Mở công cụ"}</span>
-    </Button>
-  </div>
-</div>
-</div>
-</div>
+<TimelineStrip onOpenScheduleEditor={() => setShowScheduleEditor(true)} />
 
 
 
@@ -333,156 +294,10 @@ export default memo(function StudyLayout() {
 
 
 
-<aside className="schedule-sidebar" id="schedule-sidebar">
-
-<div className="schedule-sidebar-header">
-<div className="sidebar-header-title">
-<span className="live-pulse-dot"></span>
-<h3>{"Lịch 12H & Timers"}</h3>
-</div>
-<div className="sidebar-header-actions">
-<Button variant="unstyled" className="icon-tool-btn active" id="toggle-sound-alerts-btn" title="Bật/Tắt chuông báo âm thanh">
-<span>{"🔊"}</span>
-</Button>
-<Button variant="unstyled" className="icon-tool-btn" id="toggle-desktop-notif-btn" title="Bật/Tắt thông báo Desktop">
-<span>{"🔔"}</span>
-</Button>
-<Button variant="unstyled" className="icon-tool-btn test-bell" id="test-alert-btn" title="Thử chuông ngay lập tức">
-<span>{"⚡"}</span>
-</Button>
-<Button variant="unstyled" className="icon-tool-btn dock-toggle-btn" id="close-schedule-panel-btn" title="Thu gọn / Ẩn cột này">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="9 18 15 12 9 6"></polyline></svg>
-</Button>
-</div>
+<ScheduleSidebar onOpenScheduleEditor={() => setShowScheduleEditor(true)} onClose={() => document.body.classList.toggle('schedule-collapsed')} />
 </div>
 
-<div className="schedule-sidebar-body">
-
-<div className="sidebar-clock-card">
-<div className="clock-display-row">
-<div className="live-clock-text" id="live-clock-time">{"00:00:00"}</div>
-<span className="status-indicator-pill active" id="current-status-badge">{"ĐANG TRONG KHỐI"}</span>
-</div>
-<div className="clock-sub-row">
-<span className="mode-tag deep" id="current-mode-badge">{"DEEP FOCUS"}</span>
-<span className="next-block-text" id="next-block-preview-text">{"⏭️ Đang tải khối kế..."}</span>
-</div>
-</div>
-
-<div className="sidebar-active-block-card">
-<div className="countdown-header-row">
-<span className="countdown-label-mini" id="countdown-label-text">{"Thời gian còn lại trong khối:"}</span>
-<div className="countdown-digits-compact" id="live-countdown-digits">{"00:00:00"}</div>
-</div>
-<div className="block-progress-track">
-<div className="block-progress-fill w-[0%]" id="live-block-progress-fill" ></div>
-</div>
-<div className="progress-meta-row">
-<span id="block-start-time-lbl">{"07:00"}</span>
-<span id="block-percent-lbl">{"0%"}</span>
-<span id="block-end-time-lbl">{"08:30"}</span>
-</div>
-<div className="current-block-info">
-<h4 className="block-name-title" id="current-block-name">{"Đang xác định khối học..."}</h4>
-<p className="block-output-desc" id="current-block-output">{"🎯 Mục tiêu đầu ra..."}</p>
-</div>
-<Button variant="unstyled" className="btn-primary jump-tool-btn" id="btn-jump-to-current-tool">{"\n            🚀 Mở Nhanh Công Cụ Này\n          "}</Button>
-</div>
-
-<div className="sidebar-timer-card">
-<div className="timer-card-title">
-<h4>{"⏱️ Đồng Hồ Tập Trung (Focus Timer)"}</h4>
-</div>
-<div className="timer-mode-selector">
-<Button variant="unstyled" className="timer-mode-btn active" data-mode="deep">{"90m Deep"}</Button>
-<Button variant="unstyled" className="timer-mode-btn" data-mode="pomo">{"25m Pomo"}</Button>
-<Button variant="unstyled" className="timer-mode-btn" data-mode="break">{"5m Nghỉ"}</Button>
-<Button variant="unstyled" className="timer-mode-btn" data-mode="stopwatch">{"Bấm giờ"}</Button>
-</div>
-<div className="timer-dial-compact" id="timer-dial-ring">
-<div className="timer-time-display-compact" id="timer-time-text">{"90:00"}</div>
-<div className="timer-label-compact">{"Deep Focus Mode"}</div>
-</div>
-<div className="timer-controls-row">
-<Button variant="unstyled" className="btn-primary timer-action-btn" id="timer-start-btn">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>
-<span>{"Bắt đầu"}</span>
-</Button>
-<Button variant="unstyled" className="btn-secondary timer-action-btn" id="timer-reset-btn">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><path d="M23 4v6h-6"></path><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"></path></svg>
-<span>{"Đặt lại"}</span>
-</Button>
-</div>
-</div>
-
-<div className="sidebar-schedule-section">
-<div className="schedule-section-header">
-<div className="flex items-center justify-between w-full">
-<h4 id="sidebar-schedule-title">{"📅 9 Khung Giờ Trong Ngày"}</h4>
-<Button variant="unstyled" className="icon-tool-btn text-[12px] px-2 py-0.5 bg-[rgba(255,255,255,0.08)] rounded hover:bg-[rgba(255,255,255,0.15)] text-[#cbd5e1]" id="sidebar-edit-schedule-btn" title="Chỉnh sửa lịch trong ngày (Kéo, thả, sửa giờ, B1->C1 8H)" onClick={() => setShowScheduleEditor(true)}>
-<span>{"✏️ Sửa lịch"}</span>
-</Button>
-</div>
-<span className="schedule-hint" id="sidebar-schedule-hint">{"07:00–22:30"}</span>
-</div>
-<div className="schedule-blocks compact-list" id="schedule-list-container"></div>
-</div>
-
-<div className="sidebar-protocols-box">
-<Button variant="unstyled" className="btn-secondary protocols-shortcut-btn" id="open-protocols-modal-btn">{"\n            📋 Xem 5 Protocols Quy Trình Học Chuẩn\n          "}</Button>
-</div>
-</div>
-</aside>
-</div>
-
-<div className="modal-overlay hidden" id="lan-share-modal" >
-<div className="modal-container lan-modal-box">
-<div className="modal-header">
-<div className="modal-title-group">
-<span className="modal-icon">{"📱"}</span>
-<div>
-<h3>{"Học Trên Điện Thoại & Thiết Bị LAN"}</h3>
-<p className="modal-subtitle">{"Quét mã QR để mở trạm học trên iPhone, iPad, Android hoặc máy tính khác trong cùng Wi-Fi"}</p>
-</div>
-</div>
-<Button variant="unstyled" className="modal-close-btn" id="close-lan-modal">{"×"}</Button>
-</div>
-<div className="modal-body">
-<div className="lan-content-grid">
-<div className="lan-qr-wrapper">
-<div className="lan-qr-card" id="lan-qr-card">
-<img id="lan-qr-image" alt="Mã QR truy cập LAN" />
-</div>
-<p className="lan-qr-caption">{"📷 Dùng Camera điện thoại quét mã này"}</p>
-</div>
-<div className="lan-info-panel">
-<div className="lan-input-group">
-<label htmlFor="lan-url-input">{"Đường dẫn trong mạng nội bộ (LAN):"}</label>
-<div className="lan-url-box">
-<input type="text" id="lan-url-input" readOnly defaultValue="http://192.168.101.169:8080/" />
-<Button variant="unstyled" className="btn btn-primary" id="btn-copy-lan-url">
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"></rect><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"></path></svg>
-<span>{"Sao chép"}</span>
-</Button>
-</div>
-</div>
-<div className="lan-guide-card">
-<h4>{"📌 3 Bước kết nối nhanh trên điện thoại:"}</h4>
-<ol>
-<li>{"Đảm bảo điện thoại kết nối "}<strong>{"chung mạng Wi-Fi"}</strong>{" với máy tính này."}</li>
-<li>{"Mở camera điện thoại quét mã QR hoặc gõ địa chỉ trên vào Safari / Chrome."}</li>
-<li>{"Bấm "}<strong>{"Chia sẻ → \"Thêm vào Màn hình chính\" (Add to Home Screen)"}</strong>{" để dùng tràn viền như App gốc!"}</li>
-</ol>
-</div>
-<div className="lan-status-box">
-<span className="status-dot-pulse"></span>
-<span>{"Máy chủ đang phục vụ tại IP: "}<strong>{"192.168.101.169"}</strong>{" • Cổng "}<strong>{"8080"}</strong></span>
-</div>
-</div>
-</div>
-</div>
-</div>
-</div>
+<LanShareModal isOpen={showLanShareModal} onClose={() => setShowLanShareModal(false)} />
 
 
 
@@ -509,5 +324,6 @@ export default memo(function StudyLayout() {
   dayNum={importLessonDay}
   onClose={() => setShowImportLesson(false)}
 />
+<CloudLibraryModal isOpen={showCloudLibrary} onClose={() => setShowCloudLibrary(false)} />
 <ChibiCompanionWidget />
 </>); });

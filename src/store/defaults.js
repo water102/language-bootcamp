@@ -18,6 +18,7 @@ export const initialState = {
     speakingScore: { fluency: 0, grammar: 0, vocab: 0, pronunciation: 0, org: 0 },
     writingScore: { task: 0, org: 0, grammar: 0, vocab: 0 }
   },
+  pronunciationCompleted: {}, // lessonId -> bool
   settings: {
     soundAlerts: true,
     desktopNotif: false,

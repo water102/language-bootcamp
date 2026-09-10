@@ -36,14 +36,15 @@ test.describe('Day-Specific Content & Timeline Current Objective', () => {
     const speakingBlockDay3 = page.locator('.schedule-block-item').filter({ has: page.locator('.block-title', { hasText: /speaking|nói/i }) }).first();
     await speakingBlockDay3.click();
 
-    // Verify Speaking view opened with Day 3 prompt
-    await expect(page).toHaveURL(/#\/speaking/);
-    const speakingPrompt = page.locator('#active-speaking-prompt-text');
-    await expect(speakingPrompt).toContainText('Day 3');
+    // Sidebar blocks open the Lesson Hub with the exact day's content
+    await expect(page).toHaveURL(/#\/lessons/);
+    const themeTitle = page.locator('#lesson-theme-title');
+    await expect(themeTitle).toContainText('Day 3');
+    await expect(page.locator('#lesson-speaking-task')).not.toBeEmpty();
 
     // 2. Switch to Day 15
     await page.selectOption('#quick-day-select', '15');
-    await expect(speakingPrompt).toContainText('Day 15');
+    await expect(themeTitle).toContainText('Day 15');
 
     // 3. Navigate to Dashboard and click a Writing block for Day 15
     await page.click('.nav-link[data-target="dashboard"]');
@@ -51,14 +52,14 @@ test.describe('Day-Specific Content & Timeline Current Objective', () => {
     const writingBlockDay15 = page.locator('.schedule-block-item').filter({ has: page.locator('.block-title', { hasText: /writing|viết/i }) }).first();
     await writingBlockDay15.click();
 
-    // Verify Writing view opened with Day 15 prompt
-    await expect(page).toHaveURL(/#\/writing/);
-    const writingPrompt = page.locator('#active-writing-prompt-text');
-    await expect(writingPrompt).toContainText('Day 15');
+    // Verify Lesson Hub opened with Day 15 writing prompt
+    await expect(page).toHaveURL(/#\/lessons/);
+    await expect(themeTitle).toContainText('Day 15');
+    await expect(page.locator('#lesson-writing-task')).not.toBeEmpty();
 
     // 4. Switch to Day 50
     await page.selectOption('#quick-day-select', '50');
-    await expect(writingPrompt).toContainText('Day 50');
+    await expect(themeTitle).toContainText('Day 50');
   });
 
   test('Lessons Page supports all 120 days and renders media embeds for corresponding days', async ({ page }) => {

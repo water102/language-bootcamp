@@ -23,6 +23,12 @@ export class BootcampDatabase extends Dexie {
       writingDrafts: '++id, day, draftType, version, createdAt',
       customLessons: 'id, day, createdAt'
     });
+    this.version(4).stores({
+      recordings: '++id, day, takeType, createdAt',
+      writingDrafts: '++id, day, draftType, version, createdAt',
+      customLessons: 'id, day, createdAt',
+      writingAiResults: 'id, topicId, day, createdAt'
+    });
   }
 }
 
@@ -161,6 +167,75 @@ export async function saveCustomLessonLocal(lesson) {
   }
 }
 
+/**
+ * Store a shared (cloud) lesson version locally WITHOUT overriding the
+ * device's active version choice. Deduplicated by version id.
+ * @returns {Promise<{ added: boolean, lesson: Object }>}
+ */
+export async function saveRemoteCustomLessonVersion(lesson) {
+  const day = Number(lesson.day);
+  if (!Number.isFinite(day) || !lesson.id) {
+    return { added: false, lesson };
+  }
+
+  try {
+    const existing = await getCustomLessonVersions(day);
+    if (existing.some(v => v.id === lesson.id)) {
+      return { added: false, lesson };
+    }
+  } catch (e) {}
+
+  if (!lesson.createdAt) lesson.createdAt = new Date().toISOString();
+  if (!lesson.updatedAt) lesson.updatedAt = lesson.createdAt;
+  lesson.sharedFromCloud = true;
+
+  try {
+    await db.customLessons.put({
+      id: lesson.id,
+      day,
+      lesson,
+      createdAt: lesson.createdAt,
+      updatedAt: lesson.updatedAt
+    });
+  } catch (dbErr) {
+    console.warn('[Dexie] Remote lesson put failed, keeping localStorage copy:', dbErr);
+  }
+
+  try {
+    const rawList = localStorage.getItem(`c1_custom_lesson_versions_${day}`);
+    let list = [];
+    if (rawList) {
+      try { list = JSON.parse(rawList) || []; } catch (e) { list = []; }
+    }
+    if (!list.some(l => l.id === lesson.id)) {
+      list.unshift(lesson);
+      list.sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+      if (list.length > 10) list = list.slice(0, 10);
+      localStorage.setItem(`c1_custom_lesson_versions_${day}`, JSON.stringify(list));
+    }
+  } catch (e) {
+    console.warn('LocalStorage quota warning (remote lesson):', e);
+  }
+
+  return { added: true, lesson };
+}
+
+/**
+ * Make a shared cloud lesson the active version for its day on this device.
+ * Only used for days that have no locally imported lesson yet.
+ */
+export function activateRemoteCustomLesson(lesson) {
+  try {
+    const day = Number(lesson.day);
+    if (!Number.isFinite(day) || !lesson.id) return false;
+    localStorage.setItem(`c1_custom_lesson_${day}`, JSON.stringify(lesson));
+    setActiveLessonVersionId(day, lesson.id);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 export async function getCustomLessonVersions(day) {
   const targetDay = Number(day);
   let versions = [];
@@ -283,3 +358,87 @@ export async function deleteCustomLessonLocal(day) {
     return false;
   }
 }
+
+/**
+ * Writing AI Results Multi-Version Operations
+ */
+export async function saveWritingAiResultLocal(result) {
+  try {
+    const item = {
+      ...result,
+      id: result.id || `w_${Date.now()}_${Math.random().toString(36).slice(2, 7)}`,
+      createdAt: result.createdAt || new Date().toISOString()
+    };
+
+    // Save to Dexie
+    try {
+      await db.writingAiResults.put(item);
+    } catch (dbErr) {
+      console.warn('[Dexie] writingAiResults put failed, keeping localStorage fallback:', dbErr);
+    }
+
+    // Save to LocalStorage cache
+    if (item.topicId) {
+      const topicKey = `c1_writing_ai_results_${item.topicId}`;
+      try {
+        const existing = JSON.parse(localStorage.getItem(topicKey) || '[]');
+        const filtered = existing.filter(r => r.id !== item.id);
+        filtered.unshift(item);
+        localStorage.setItem(topicKey, JSON.stringify(filtered));
+      } catch (e) {
+        console.warn('[LocalStorage] Failed to cache writing ai result:', e);
+      }
+    }
+
+    return item;
+  } catch (err) {
+    console.warn('[Storage] Failed to save writing ai result:', err);
+    return result;
+  }
+}
+
+export async function getWritingAiResultsLocal(topicId) {
+  if (!topicId) return [];
+  try {
+    // Try Dexie first
+    let list = [];
+    try {
+      list = await db.writingAiResults.where('topicId').equals(topicId).reverse().sortBy('createdAt');
+    } catch (e) {}
+
+    if (list && list.length > 0) {
+      return list;
+    }
+
+    // Fallback to localStorage
+    const cached = localStorage.getItem(`c1_writing_ai_results_${topicId}`);
+    if (cached) {
+      return JSON.parse(cached);
+    }
+
+    return [];
+  } catch (err) {
+    console.warn('[Storage] Failed to get writing ai results:', err);
+    return [];
+  }
+}
+
+export async function deleteWritingAiResultLocal(id, topicId) {
+  try {
+    try {
+      await db.writingAiResults.delete(id);
+    } catch (e) {}
+
+    if (topicId) {
+      const topicKey = `c1_writing_ai_results_${topicId}`;
+      const cached = JSON.parse(localStorage.getItem(topicKey) || '[]');
+      const filtered = cached.filter(r => r.id !== id);
+      localStorage.setItem(topicKey, JSON.stringify(filtered));
+    }
+    return true;
+  } catch (err) {
+    console.warn('[Storage] Failed to delete writing ai result:', err);
+    return false;
+  }
+}
+

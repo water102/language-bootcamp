@@ -42,8 +42,11 @@ test.describe('C1 Bootcamp Enhancements Suite', () => {
     await expect(block5).toBeVisible();
     await block5.click();
 
-    // Verify view navigated to Speaking Studio
-    await expect(page.locator('#view-speaking')).toHaveClass(/active/);
+    // Sidebar blocks now open the Lesson Hub and scroll to the matching section
+    await expect(page).toHaveURL(/#\/lessons/);
+    await expect(page.locator('#view-lessons')).toHaveClass(/active/);
+    const speakingTask = page.locator('#lesson-speaking-task');
+    await expect(speakingTask).not.toBeEmpty();
   });
 
   test('3. Schedule Editor Modal - Reorder, edit and apply 8H B1->C1 preset', async ({ page }) => {
